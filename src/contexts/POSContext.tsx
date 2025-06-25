@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { Product, CartItem, Sale, UserRole } from '@/types/pos';
 
@@ -94,7 +93,7 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
-  const [userRole, setUserRole] = useState<UserRole>('employee');
+  const [userRole, setUserRole] = useState<UserRole>('admin'); // Changed from 'employee' to 'admin'
 
   const addProduct = useCallback((newProduct: Omit<Product, 'id'>) => {
     const product: Product = {
