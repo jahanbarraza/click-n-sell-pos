@@ -8,6 +8,9 @@ import { SalesHistory } from '@/components/pos/SalesHistory';
 import { Dashboard } from '@/components/pos/Dashboard';
 import { ProductManagement } from '@/components/pos/ProductManagement';
 import { InventoryView } from '@/components/pos/InventoryView';
+import { CategoryManagement } from '@/components/pos/CategoryManagement';
+import { CustomerManagement } from '@/components/pos/CustomerManagement';
+import { UserManagement } from '@/components/pos/UserManagement';
 
 const Index = () => {
   const [activeView, setActiveView] = useState('pos');
@@ -33,6 +36,12 @@ const Index = () => {
         return <ProductManagement />;
       case 'inventory':
         return <InventoryView />;
+      case 'categories':
+        return <CategoryManagement />;
+      case 'customers':
+        return <CustomerManagement />;
+      case 'users':
+        return <UserManagement />;
       default:
         return <div>Vista no encontrada</div>;
     }

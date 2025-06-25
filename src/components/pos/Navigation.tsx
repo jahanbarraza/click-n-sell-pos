@@ -10,7 +10,11 @@ import {
   Clock, 
   FileText,
   Plus,
-  AlertTriangle
+  AlertTriangle,
+  Users,
+  UserCheck,
+  Tag,
+  Package
 } from 'lucide-react';
 
 interface NavigationProps {
@@ -28,8 +32,11 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
     { id: 'sales', label: 'Historial', icon: Clock },
     { id: 'inventory', label: 'Inventario', icon: FileText, badge: lowStockCount || undefined },
     ...(userRole === 'admin' ? [
-      { id: 'products', label: 'Productos', icon: Settings },
-      { id: 'dashboard', label: 'Dashboard', icon: User }
+      { id: 'products', label: 'Productos', icon: Package },
+      { id: 'categories', label: 'Categorías', icon: Tag },
+      { id: 'customers', label: 'Clientes', icon: Users },
+      { id: 'users', label: 'Usuarios', icon: UserCheck },
+      { id: 'dashboard', label: 'Dashboard', icon: Settings }
     ] : [])
   ];
 
