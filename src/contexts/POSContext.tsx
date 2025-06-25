@@ -1,210 +1,230 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Product, CartItem, Sale, UserRole } from '@/types/pos';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Product, Customer, Sale, CartItem, Category, User as POSUser } from '@/types/pos';
 
 interface POSContextType {
-  // Products
   products: Product[];
-  addProduct: (product: Omit<Product, 'id'>) => void;
-  updateProduct: (id: string, product: Partial<Product>) => void;
-  deleteProduct: (id: string) => void;
-  
-  // Cart
-  cart: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  updateCartQuantity: (productId: string, quantity: number) => void;
-  removeFromCart: (productId: string) => void;
-  clearCart: () => void;
-  
-  // Sales
+  categories: Category[];
+  customers: Customer[];
+  users: POSUser[];
   sales: Sale[];
-  completeSale: (paymentMethod: Sale['paymentMethod'], customerName?: string) => Sale;
-  
-  // User
-  userRole: UserRole;
-  setUserRole: (role: UserRole) => void;
-  
-  // Calculations
-  getCartTotal: () => { subtotal: number; tax: number; total: number };
+  cart: CartItem[];
+  userRole: 'admin' | 'cashier';
+  addProduct: (product: Product) => void;
+  updateProduct: (product: Product) => void;
+  deleteProduct: (productId: string) => void;
+  addToCart: (product: Product) => void;
+  removeFromCart: (productId: string) => void;
+  updateCartQuantity: (productId: string, quantity: number) => void;
+  clearCart: () => void;
+  processSale: (paymentMethod: 'cash' | 'card' | 'digital') => void;
+  addCategory: (category: Category) => void;
+  updateCategory: (category: Category) => void;
+  deleteCategory: (categoryId: string) => void;
+  addCustomer: (customer: Customer) => void;
+  updateCustomer: (customer: Customer) => void;
+  deleteCustomer: (customerId: string) => void;
+  addUser: (user: POSUser) => void;
+  updateUser: (user: POSUser) => void;
+  deleteUser: (userId: string) => void;
   getLowStockAlerts: () => Product[];
 }
 
 const POSContext = createContext<POSContextType | undefined>(undefined);
 
-const TAX_RATE = 0.1; // 10% tax
-
-const initialProducts: Product[] = [
-  {
-    id: '1',
-    name: 'Café Americano',
-    price: 2.50,
-    category: 'Bebidas',
-    stock: 100,
-    barcode: '7501234567890',
-    description: 'Café negro americano'
-  },
-  {
-    id: '2',
-    name: 'Cappuccino',
-    price: 3.50,
-    category: 'Bebidas',
-    stock: 80,
-    barcode: '7501234567891',
-    description: 'Café con leche espumosa'
-  },
-  {
-    id: '3',
-    name: 'Hamburguesa Clásica',
-    price: 8.99,
-    category: 'Comidas',
-    stock: 25,
-    barcode: '7501234567892',
-    description: 'Hamburguesa con carne, lechuga, tomate'
-  },
-  {
-    id: '4',
-    name: 'Pizza Margherita',
-    price: 12.99,
-    category: 'Comidas',
-    stock: 15,
-    barcode: '7501234567893',
-    description: 'Pizza con tomate, mozzarella y albahaca'
-  },
-  {
-    id: '5',
-    name: 'Cheesecake',
-    price: 4.99,
-    category: 'Postres',
-    stock: 20,
-    barcode: '7501234567894',
-    description: 'Pastel de queso con base de galleta'
-  },
-  {
-    id: '6',
-    name: 'Tiramisu',
-    price: 5.99,
-    category: 'Postres',
-    stock: 5,
-    barcode: '7501234567895',
-    description: 'Postre italiano con café y mascarpone'
+export const usePOS = () => {
+  const context = useContext(POSContext);
+  if (context === undefined) {
+    throw new Error('usePOS must be used within a POSProvider');
   }
-];
+  return context;
+};
 
 export const POSProvider = ({ children }: { children: React.ReactNode }) => {
-  const [products, setProducts] = useState<Product[]>(initialProducts);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { user } = useAuth();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [users, setUsers] = useState<POSUser[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
-  const [userRole, setUserRole] = useState<UserRole>('admin'); // Changed from 'employee' to 'admin'
+  const [cart, setCart] = useState<CartItem[]>([]);
 
-  const addProduct = useCallback((newProduct: Omit<Product, 'id'>) => {
-    const product: Product = {
-      ...newProduct,
-      id: Date.now().toString()
-    };
-    setProducts(prev => [...prev, product]);
-  }, []);
+  // Use the user role from AuthContext
+  const userRole = user?.role || 'cashier';
 
-  const updateProduct = useCallback((id: string, updatedProduct: Partial<Product>) => {
-    setProducts(prev => prev.map(p => p.id === id ? { ...p, ...updatedProduct } : p));
-  }, []);
-
-  const deleteProduct = useCallback((id: string) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
-    setCart(prev => prev.filter(item => item.product.id !== id));
-  }, []);
-
-  const addToCart = useCallback((product: Product, quantity = 1) => {
-    if (product.stock < quantity) return;
-    
-    setCart(prev => {
-      const existingItem = prev.find(item => item.product.id === product.id);
-      if (existingItem) {
-        const newQuantity = existingItem.quantity + quantity;
-        if (newQuantity <= product.stock) {
-          return prev.map(item =>
-            item.product.id === product.id
-              ? { ...item, quantity: newQuantity }
-              : item
-          );
-        }
-        return prev;
-      }
-      return [...prev, { product, quantity }];
-    });
-  }, []);
-
-  const updateCartQuantity = useCallback((productId: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(productId);
-      return;
+  useEffect(() => {
+    // Load data from localStorage or default values
+    const storedProducts = localStorage.getItem('products');
+    if (storedProducts) {
+      setProducts(JSON.parse(storedProducts));
     }
-    
-    setCart(prev => prev.map(item =>
-      item.product.id === productId && quantity <= item.product.stock
-        ? { ...item, quantity }
-        : item
+
+    const storedCategories = localStorage.getItem('categories');
+    if (storedCategories) {
+      setCategories(JSON.parse(storedCategories));
+    }
+
+    const storedCustomers = localStorage.getItem('customers');
+    if (storedCustomers) {
+      setCustomers(JSON.parse(storedCustomers));
+    }
+
+    const storedUsers = localStorage.getItem('users');
+    if (storedUsers) {
+      setUsers(JSON.parse(storedUsers));
+    }
+
+    const storedSales = localStorage.getItem('sales');
+    if (storedSales) {
+      setSales(JSON.parse(storedSales));
+    }
+
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      setCart(JSON.parse(storedCart));
+    }
+  }, []);
+
+  useEffect(() => {
+    // Save data to localStorage whenever it changes
+    localStorage.setItem('products', JSON.stringify(products));
+    localStorage.setItem('categories', JSON.stringify(categories));
+    localStorage.setItem('customers', JSON.stringify(customers));
+    localStorage.setItem('users', JSON.stringify(users));
+    localStorage.setItem('sales', JSON.stringify(sales));
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [products, categories, customers, users, sales, cart]);
+
+  const addProduct = (product: Product) => {
+    setProducts([...products, product]);
+  };
+
+  const updateProduct = (product: Product) => {
+    setProducts(products.map(p => p.id === product.id ? product : p));
+  };
+
+  const deleteProduct = (productId: string) => {
+    setProducts(products.filter(p => p.id !== productId));
+    setCart(cart.filter(item => item.product.id !== productId));
+  };
+
+  const addToCart = (product: Product) => {
+    const existingCartItem = cart.find(item => item.product.id === product.id);
+    if (existingCartItem) {
+      updateCartQuantity(product.id, existingCartItem.quantity + 1);
+    } else {
+      setCart([...cart, { product: product, quantity: 1 }]);
+    }
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart(cart.filter(item => item.product.id !== productId));
+  };
+
+  const updateCartQuantity = (productId: string, quantity: number) => {
+    setCart(cart.map(item =>
+      item.product.id === productId ? { ...item, quantity: quantity } : item
     ));
-  }, []);
+  };
 
-  const removeFromCart = useCallback((productId: string) => {
-    setCart(prev => prev.filter(item => item.product.id !== productId));
-  }, []);
-
-  const clearCart = useCallback(() => {
+  const clearCart = () => {
     setCart([]);
-  }, []);
+  };
 
-  const getCartTotal = useCallback(() => {
-    const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-    const tax = subtotal * TAX_RATE;
-    const total = subtotal + tax;
-    return { subtotal, tax, total };
-  }, [cart]);
+  const processSale = (paymentMethod: 'cash' | 'card' | 'digital') => {
+    const saleItems = cart.map(item => ({
+      product: item.product,
+      quantity: item.quantity,
+      price: item.product.price
+    }));
 
-  const completeSale = useCallback((paymentMethod: Sale['paymentMethod'], customerName?: string) => {
-    const { subtotal, tax, total } = getCartTotal();
-    const sale: Sale = {
-      id: Date.now().toString(),
-      items: [...cart],
-      subtotal,
-      tax,
-      total,
+    const total = saleItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+
+    const newSale: Sale = {
+      id: Math.random().toString(36).substring(7),
+      items: saleItems,
+      total: total,
       timestamp: new Date(),
-      paymentMethod,
-      customerName
+      paymentMethod: paymentMethod
     };
+
+    setSales([...sales, newSale]);
+    setCart([]);
 
     // Update product stock
-    cart.forEach(item => {
-      updateProduct(item.product.id, { 
-        stock: item.product.stock - item.quantity 
-      });
+    saleItems.forEach(item => {
+      setProducts(products.map(product =>
+        product.id === item.product.id ? { ...product, stock: product.stock - item.quantity } : product
+      ));
     });
+  };
 
-    setSales(prev => [sale, ...prev]);
-    clearCart();
-    return sale;
-  }, [cart, getCartTotal, updateProduct, clearCart]);
+  const addCategory = (category: Category) => {
+    setCategories([...categories, category]);
+  };
 
-  const getLowStockAlerts = useCallback(() => {
+  const updateCategory = (category: Category) => {
+    setCategories(categories.map(c => c.id === category.id ? category : c));
+  };
+
+  const deleteCategory = (categoryId: string) => {
+    setCategories(categories.filter(c => c.id !== categoryId));
+  };
+
+  const addCustomer = (customer: Customer) => {
+    setCustomers([...customers, customer]);
+  };
+
+  const updateCustomer = (customer: Customer) => {
+    setCustomers(customers.map(c => c.id === customer.id ? customer : c));
+  };
+
+  const deleteCustomer = (customerId: string) => {
+    setCustomers(customers.filter(c => c.id !== customerId));
+  };
+
+  const addUser = (user: POSUser) => {
+    setUsers([...users, user]);
+  };
+
+  const updateUser = (user: POSUser) => {
+    setUsers(users.map(u => u.id === user.id ? user : u));
+  };
+
+  const deleteUser = (userId: string) => {
+    setUsers(users.filter(u => u.id !== userId));
+  };
+
+  const getLowStockAlerts = () => {
     return products.filter(product => product.stock <= 10);
-  }, [products]);
+  };
 
-  const value: POSContextType = {
+  const value = {
     products,
+    categories,
+    customers,
+    users,
+    sales,
+    cart,
+    userRole,
     addProduct,
     updateProduct,
     deleteProduct,
-    cart,
     addToCart,
-    updateCartQuantity,
     removeFromCart,
+    updateCartQuantity,
     clearCart,
-    sales,
-    completeSale,
-    userRole,
-    setUserRole,
-    getCartTotal,
-    getLowStockAlerts
+    processSale,
+    addCategory,
+    updateCategory,
+    deleteCategory,
+    addCustomer,
+    updateCustomer,
+    deleteCustomer,
+    addUser,
+    updateUser,
+    deleteUser,
+    getLowStockAlerts,
   };
 
   return (
@@ -212,12 +232,4 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </POSContext.Provider>
   );
-};
-
-export const usePOS = () => {
-  const context = useContext(POSContext);
-  if (!context) {
-    throw new Error('usePOS must be used within a POSProvider');
-  }
-  return context;
 };
