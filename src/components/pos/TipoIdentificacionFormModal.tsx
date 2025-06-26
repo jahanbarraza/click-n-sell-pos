@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { X, CreditCard, FileText, Globe, Code } from 'lucide-react';
 
@@ -259,4 +260,3 @@ export const TipoIdentificacionFormModal: React.FC<TipoIdentificacionFormModalPr
     </div>
   );
 };
-
