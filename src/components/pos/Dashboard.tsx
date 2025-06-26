@@ -18,17 +18,24 @@ export const Dashboard = () => {
   const { sales, products, getLowStockAlerts, userRole } = usePOS();
 
   const today = new Date();
-  const todaySales = sales.filter(sale => 
-    sale.timestamp.toDateString() === today.toDateString()
-  );
+  const todaySales = sales.filter(sale => {
+    const saleDate = new Date(sale.timestamp);
+    return saleDate.toDateString() === today.toDateString();
+  });
 
   const thisWeek = new Date();
   thisWeek.setDate(thisWeek.getDate() - 7);
-  const weekSales = sales.filter(sale => sale.timestamp >= thisWeek);
+  const weekSales = sales.filter(sale => {
+    const saleDate = new Date(sale.timestamp);
+    return saleDate >= thisWeek;
+  });
 
   const thisMonth = new Date();
   thisMonth.setMonth(thisMonth.getMonth() - 1);
-  const monthSales = sales.filter(sale => sale.timestamp >= thisMonth);
+  const monthSales = sales.filter(sale => {
+    const saleDate = new Date(sale.timestamp);
+    return saleDate >= thisMonth;
+  });
 
   const todayRevenue = todaySales.reduce((sum, sale) => sum + sale.total, 0);
   const weekRevenue = weekSales.reduce((sum, sale) => sum + sale.total, 0);
