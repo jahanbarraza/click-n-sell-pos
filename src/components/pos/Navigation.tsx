@@ -5,6 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard,
   Building2,
+  Store2,
+  Building,
   Users,
   User,
   UserCheck,
@@ -50,7 +52,11 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
     {
       id: 'gestion-organizacion',
       label: 'Gestión Organización',
-      icon: Building2
+      icon: Building2,
+      children: [
+        { id: 'companies', label: 'Compañías', icon: Building },
+        { id: 'stores', label: 'Tiendas', icon: Store2 }
+      ]
     },
     {
       id: 'gestion-personas',

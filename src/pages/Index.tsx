@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -21,6 +22,8 @@ import { Roles } from '@/components/pos/Roles';
 import { Persons } from '@/components/pos/Persons';
 import { TiposIdentificacionComponent } from '@/components/pos/TiposIdentificacion';
 import { Units } from '@/components/pos/Units';
+import { Companies } from '@/components/pos/Companies';
+import { Stores } from '@/components/pos/Stores';
 import { Button } from '@/components/ui/button';
 import { LogOut, Key } from 'lucide-react';
 
@@ -81,6 +84,10 @@ const Index = () => {
         return <SalesReports />;
       case 'dashboard':
         return <Dashboard />;
+      case 'companies':
+        return <Companies />;
+      case 'stores':
+        return <Stores />;
       case 'products':
         return <ProductManagement />;
       case 'inventory':

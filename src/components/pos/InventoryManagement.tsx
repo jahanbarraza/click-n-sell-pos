@@ -1,257 +1,300 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { usePOS } from '@/contexts/POSContext';
-import { Package, Filter, RefreshCw, Download, AlertTriangle, Search } from 'lucide-react';
+import { 
+  Search, 
+  Filter, 
+  Package, 
+  AlertTriangle, 
+  TrendingUp, 
+  BarChart3,
+  CheckCircle2,
+  XCircle
+} from 'lucide-react';
 
 export const InventoryManagement = () => {
-  const { products } = usePOS();
+  const { products, categories } = usePOS();
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('todas');
-  const [selectedStore, setSelectedStore] = useState('todas');
-  const [onlyLowStock, setOnlyLowStock] = useState(false);
-  const [onlyOutOfStock, setOnlyOutOfStock] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [stockFilter, setStockFilter] = useState('all');
+  const [showLowStock, setShowLowStock] = useState(false);
+  const [showOutOfStock, setShowOutOfStock] = useState(false);
 
-  // Mock data similar to the image
-  const mockInventoryData = [
-    { codigo: 'PROD229', nombre: 'Huawei 400', categoria: 'Carcasas', subcategoria: 'Carcasa Mujer', precioBase: 25600, stock: 148, estado: 'Stock Alto', valorTotal: 3788800 },
-    { codigo: 'PROD434', nombre: 'Mate XT ULTIMATE DESIGN', categoria: 'Huawei', subcategoria: 'Mate XT ULTIMATE DESIGN', precioBase: 15600, stock: 99, estado: 'Stock Alto', valorTotal: 1544400 },
-    { codigo: 'PROD947', nombre: 'Motorola AX', categoria: 'Carcasas', subcategoria: 'Carcasa Mujer', precioBase: 43500, stock: 162999, estado: 'Stock Alto', valorTotal: 17090456 },
-    { codigo: 'PROD666', nombre: 'Motorola AX100', categoria: 'Huawei', subcategoria: 'Mate XT ULTIMATE DESIGN', precioBase: 43000, stock: 85, estado: 'Stock Alto', valorTotal: 3655000 },
-    { codigo: 'PROD805', nombre: 'Redmi 13C', categoria: 'Carcasas', subcategoria: 'Carcasa Mujer', precioBase: 11200, stock: 45, estado: 'Stock Normal', valorTotal: 504000 }
-  ];
+  const statistics = useMemo(() => {
+    const totalProducts = products.length;
+    const totalValue = products.reduce((sum, product) => sum + (product.price * product.stock), 0);
+    const lowStockCount = products.filter(product => product.stock <= 10 && product.stock > 0).length;
+    const outOfStockCount = products.filter(product => product.stock === 0).length;
+    const inStockCount = products.filter(product => product.stock > 10).length;
 
-  const totalProducts = mockInventoryData.length;
-  const outOfStock = 0;
-  const lowStock = 0;
-  const totalStock = mockInventoryData.reduce((sum, item) => sum + item.stock, 0);
-  const totalValue = mockInventoryData.reduce((sum, item) => sum + item.valorTotal, 0);
+    return {
+      totalProducts,
+      totalValue,
+      lowStockCount,
+      outOfStockCount,
+      inStockCount
+    };
+  }, [products]);
 
-  const formatPrice = (price: number) => {
-    return `$${price.toLocaleString('es-CO')}`;
-  };
+  const filteredProducts = useMemo(() => {
+    return products.filter(product => {
+      const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                           product.barcode?.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
+      
+      let matchesStockFilter = true;
+      if (stockFilter === 'low') {
+        matchesStockFilter = product.stock <= 10 && product.stock > 0;
+      } else if (stockFilter === 'out') {
+        matchesStockFilter = product.stock === 0;
+      } else if (stockFilter === 'in') {
+        matchesStockFilter = product.stock > 10;
+      }
+
+      const matchesLowStock = !showLowStock || (product.stock <= 10 && product.stock > 0);
+      const matchesOutOfStock = !showOutOfStock || product.stock === 0;
+
+      return matchesSearch && matchesCategory && matchesStockFilter && matchesLowStock && matchesOutOfStock;
+    });
+  }, [products, searchTerm, selectedCategory, stockFilter, showLowStock, showOutOfStock]);
 
   const getStockStatus = (stock: number) => {
-    if (stock === 0) return { label: 'Sin Stock', color: 'bg-red-100 text-red-800' };
-    if (stock < 20) return { label: 'Bajo Stock', color: 'bg-orange-100 text-orange-800' };
-    if (stock < 50) return { label: 'Stock Normal', color: 'bg-yellow-100 text-yellow-800' };
-    return { label: 'Stock Alto', color: 'bg-blue-100 text-blue-800' };
-  };
-
-  const updateInventory = () => {
-    console.log('Actualizando inventario...');
-  };
-
-  const exportInventory = () => {
-    console.log('Exportando inventario...');
+    if (stock === 0) {
+      return { status: 'Agotado', color: 'destructive', icon: XCircle };
+    } else if (stock <= 10) {
+      return { status: 'Stock Bajo', color: 'warning', icon: AlertTriangle };
+    } else {
+      return { status: 'En Stock', color: 'success', icon: CheckCircle2 };
+    }
   };
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header */}
+    <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className="w-12 h-12 bg-teal-600 rounded-lg flex items-center justify-center">
-            <Package className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Gestión de Inventario</h1>
-            <p className="text-gray-600">Administra entradas y salidas de productos</p>
-          </div>
-        </div>
-        <div className="flex space-x-2">
-          <Button onClick={updateInventory} variant="outline" className="flex items-center space-x-2">
-            <RefreshCw className="w-4 h-4" />
-            <span>Actualizar</span>
-          </Button>
-          <Button onClick={exportInventory} className="flex items-center space-x-2 bg-teal-600 hover:bg-teal-700">
-            <Download className="w-4 h-4" />
-            <span>Exportar</span>
-          </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Gestión de Inventario</h1>
+          <p className="text-gray-600">Administra el inventario de productos</p>
         </div>
       </div>
 
-      {/* Filtros */}
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Productos</CardTitle>
+            <Package className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statistics.totalProducts}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Valor Total</CardTitle>
+            <BarChart3 className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">${statistics.totalValue.toLocaleString()}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">En Stock</CardTitle>
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statistics.inStockCount}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Stock Bajo</CardTitle>
+            <AlertTriangle className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statistics.lowStockCount}</div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Agotado</CardTitle>
+            <XCircle className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{statistics.outOfStockCount}</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Filters */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
-            <Filter className="w-5 h-5" />
-            <span>Filtros de Búsqueda</span>
+            <Filter className="h-5 w-5" />
+            <span>Filtros</span>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Buscar Producto</label>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Buscar</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Nombre, código..."
+                  placeholder="Buscar productos..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
                 />
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Categoría</label>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Categoría</label>
               <Select value={selectedCategory} onValueChange={setSelectedCategory}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Todas las categorías" />
+                  <SelectValue placeholder="Seleccionar categoría" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todas">Todas las categorías</SelectItem>
-                  <SelectItem value="carcasas">Carcasas</SelectItem>
-                  <SelectItem value="huawei">Huawei</SelectItem>
+                  <SelectItem value="all">Todas las categorías</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.name}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Tienda</label>
-              <Select value={selectedStore} onValueChange={setSelectedStore}>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Estado de Stock</label>
+              <Select value={stockFilter} onValueChange={setStockFilter}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar tienda" />
+                  <SelectValue placeholder="Todos los estados" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="todas">Todas las tiendas</SelectItem>
-                  <SelectItem value="principal">Tienda Principal</SelectItem>
+                  <SelectItem value="all">Todos los estados</SelectItem>
+                  <SelectItem value="in">En Stock</SelectItem>
+                  <SelectItem value="low">Stock Bajo</SelectItem>
+                  <SelectItem value="out">Agotado</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          </div>
-          
-          <div className="flex space-x-4">
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="low-stock" 
-                checked={onlyLowStock}
-                onCheckedChange={setOnlyLowStock}
-              />
-              <label htmlFor="low-stock" className="text-sm font-medium">Solo sin stock</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="out-stock" 
-                checked={onlyOutOfStock}
-                onCheckedChange={setOnlyOutOfStock}
-              />
-              <label htmlFor="out-stock" className="text-sm font-medium">Solo bajo stock</label>
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="lowStock"
+                  checked={showLowStock}
+                  onCheckedChange={(checked) => setShowLowStock(checked === true)}
+                />
+                <label htmlFor="lowStock" className="text-sm">Solo stock bajo</label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="outOfStock"
+                  checked={showOutOfStock}
+                  onCheckedChange={(checked) => setShowOutOfStock(checked === true)}
+                />
+                <label htmlFor="outOfStock" className="text-sm">Solo agotados</label>
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Package className="h-5 w-5 text-blue-600" />
-              <div>
-                <p className="text-sm text-muted-foreground">Total Productos</p>
-                <p className="text-2xl font-bold">{totalProducts}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-5 w-5 text-red-600" />
-              <div>
-                <p className="text-sm text-muted-foreground">Sin Stock</p>
-                <p className="text-2xl font-bold text-red-600">{outOfStock}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <AlertTriangle className="h-5 w-5 text-orange-600" />
-              <div>
-                <p className="text-sm text-muted-foreground">Bajo Stock</p>
-                <p className="text-2xl font-bold text-orange-600">{lowStock}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Package className="h-5 w-5 text-green-600" />
-              <div>
-                <p className="text-sm text-muted-foreground">Stock Total</p>
-                <p className="text-2xl font-bold">{totalStock.toLocaleString()}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center space-x-2">
-              <Package className="h-5 w-5 text-purple-600" />
-              <div>
-                <p className="text-sm text-muted-foreground">Valor Inventario</p>
-                <p className="text-2xl font-bold">{formatPrice(totalValue)}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Tabla de Inventario Detallado */}
+      {/* Products Table */}
       <Card>
         <CardHeader>
-          <CardTitle>Inventario Detallado</CardTitle>
+          <CardTitle>Inventario de Productos</CardTitle>
+          <p className="text-sm text-gray-600">
+            Mostrando {filteredProducts.length} de {products.length} productos
+          </p>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Código</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Nombre</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Categoría</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subcategoría</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Precio Base</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Stock</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Estado</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valor Total</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {mockInventoryData.map((item) => {
-                  const stockStatus = getStockStatus(item.stock);
-                  return (
-                    <tr key={item.codigo} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.codigo}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{item.nombre}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{item.categoria}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{item.subcategoria}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{formatPrice(item.precioBase)}</td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{item.stock.toLocaleString()} UND</td>
-                      <td className="px-4 py-3">
-                        <Badge className={stockStatus.color}>
-                          {stockStatus.label}
-                        </Badge>
-                      </td>
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatPrice(item.valorTotal)}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Producto</TableHead>
+                <TableHead>Categoría</TableHead>
+                <TableHead>Código</TableHead>
+                <TableHead>Precio</TableHead>
+                <TableHead>Stock</TableHead>
+                <TableHead>Estado</TableHead>
+                <TableHead>Valor Total</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredProducts.map((product) => {
+                const stockInfo = getStockStatus(product.stock);
+                const StockIcon = stockInfo.icon;
+                
+                return (
+                  <TableRow key={product.id}>
+                    <TableCell>
+                      <div>
+                        <div className="font-medium">{product.name}</div>
+                        {product.description && (
+                          <div className="text-sm text-gray-500">{product.description}</div>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{product.category}</TableCell>
+                    <TableCell>{product.barcode || 'N/A'}</TableCell>
+                    <TableCell>${product.price.toLocaleString()}</TableCell>
+                    <TableCell>
+                      <span className={`font-medium ${
+                        product.stock === 0 ? 'text-red-600' : 
+                        product.stock <= 10 ? 'text-yellow-600' : 'text-green-600'
+                      }`}>
+                        {product.stock}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant={stockInfo.color as any}
+                        className="flex items-center space-x-1"
+                      >
+                        <StockIcon className="h-3 w-3" />
+                        <span>{stockInfo.status}</span>
+                      </Badge>
+                    </TableCell>
+                    <TableCell>${(product.price * product.stock).toLocaleString()}</TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+
+          {filteredProducts.length === 0 && (
+            <div className="text-center py-8">
+              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No se encontraron productos</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
