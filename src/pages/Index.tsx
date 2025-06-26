@@ -11,6 +11,7 @@ import { SalesHistory } from '@/components/pos/SalesHistory';
 import { ProductManagement } from '@/components/pos/ProductManagement';
 import { InventoryView } from '@/components/pos/InventoryView';
 import { CategoriesComponent } from '@/components/pos/Categories';
+import { SubcategoriesComponent } from '@/components/pos/Subcategories';
 import { CustomerManagement } from '@/components/pos/CustomerManagement';
 import { UsersComponent } from '@/components/pos/Users';
 import { UpdatePassword } from '@/components/pos/UpdatePassword';
@@ -74,6 +75,8 @@ const Index = () => {
         return <InventoryView />;
       case 'categories':
         return <CategoriesComponent />;
+      case 'subcategories':
+        return <SubcategoriesComponent />;
       case 'customers':
         return <CustomerManagement />;
       case 'users':
