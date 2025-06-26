@@ -4,16 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
 import { Navigation } from '@/components/pos/Navigation';
+import { Dashboard } from '@/components/pos/Dashboard';
 import { ProductGrid } from '@/components/pos/ProductGrid';
 import { Cart } from '@/components/pos/Cart';
 import { SalesHistory } from '@/components/pos/SalesHistory';
-import { Dashboard } from '@/components/pos/Dashboard';
 import { ProductManagement } from '@/components/pos/ProductManagement';
 import { InventoryView } from '@/components/pos/InventoryView';
 import { CategoryManagement } from '@/components/pos/CategoryManagement';
 import { CustomerManagement } from '@/components/pos/CustomerManagement';
 import { UserManagement } from '@/components/pos/UserManagement';
 import { UpdatePassword } from '@/components/pos/UpdatePassword';
+import { Roles } from '@/components/pos/Roles';
 import { Button } from '@/components/ui/button';
 import { LogOut, Key } from 'lucide-react';
 
@@ -75,6 +76,8 @@ const Index = () => {
         return <CustomerManagement />;
       case 'users':
         return <UserManagement />;
+      case 'roles':
+        return <Roles />;
       case 'update-password':
         return <UpdatePassword />;
       default:
