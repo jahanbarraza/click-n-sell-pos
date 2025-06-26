@@ -1,556 +1,332 @@
-import React, { useState, useCallback } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import { Users, Plus, Search, Filter, Pencil, Trash2, User } from 'lucide-react';
+import React, { useState } from 'react';
+import { Users, Plus, Search, Filter, Edit, Trash2 } from 'lucide-react';
+import { PersonFormModal } from './PersonFormModal';
 
 interface Person {
   id: string;
   name: string;
-  address: string;
-  identification: string;
-  identificationType: string;
-  phone: string;
   email: string;
-  type: 'Cliente' | 'Empleado' | 'Proveedor';
-  status: 'Activo' | 'Inactivo';
+  identificationType: string;
+  identificationNumber: string;
+  address: string;
+  phone: string;
+  type: string;
+  status: string;
 }
 
-interface PersonFormData {
-  name: string;
-  address: string;
-  identification: string;
-  identificationType: string;
-  phone: string;
-  email: string;
-  type: 'Cliente' | 'Empleado' | 'Proveedor';
-  status: 'Activo' | 'Inactivo';
-}
-
-const initialFormData: PersonFormData = {
-  name: '',
-  address: '',
-  identification: '',
-  identificationType: 'Cédula de Ciudadanía',
-  phone: '',
-  email: '',
-  type: 'Cliente',
-  status: 'Activo'
-};
+const initialPersons: Person[] = [
+  {
+    id: '1',
+    name: 'ASHLEE CASTRO SANDOVAL',
+    email: 'ashleecastro@gmail.com',
+    identificationType: 'Cédula de Extranjería',
+    identificationNumber: '1045697507',
+    address: 'Calle 18B # 17F - 24',
+    phone: '3015678546',
+    type: 'Cliente',
+    status: 'Activo'
+  },
+  {
+    id: '2',
+    name: 'CONSUMIDOR FINAL',
+    email: 'consumidor@final.com',
+    identificationType: 'Cédula de Ciudadanía',
+    identificationNumber: '0000000000',
+    address: 'N/A',
+    phone: 'N/A',
+    type: 'Cliente',
+    status: 'Activo'
+  },
+  {
+    id: '3',
+    name: 'IVAN JESUS CASTRO RUIZ',
+    email: 'ivancastro@empresa.com',
+    identificationType: 'Cédula de Ciudadanía',
+    identificationNumber: '1234567890',
+    address: 'Carrera 15 # 25-30',
+    phone: '3201234567',
+    type: 'Empleado',
+    status: 'Activo'
+  },
+  {
+    id: '4',
+    name: 'luz anaya',
+    email: 'luz.anaya@email.com',
+    identificationType: 'Cédula de Ciudadanía',
+    identificationNumber: '9876543210',
+    address: 'Avenida 10 # 12-45',
+    phone: '3109876543',
+    type: 'Cliente',
+    status: 'Activo'
+  },
+  {
+    id: '5',
+    name: 'SIRLEY CESPEDES',
+    email: 'sirley.cespedes@empresa.com',
+    identificationType: 'Cédula de Ciudadanía',
+    identificationNumber: '5555555555',
+    address: 'Calle 20 # 30-40',
+    phone: '3155555555',
+    type: 'Empleado',
+    status: 'Activo'
+  }
+];
 
 export const Persons = () => {
-  const [persons, setPersons] = useState<Person[]>([
-    {
-      id: '1',
-      name: 'ASHLEE CASTRO SANDOVAL',
-      address: 'Calle 18B # 17F - 24',
-      identification: '1045697507',
-      identificationType: 'Cédula de Extranjería',
-      phone: '3015678546',
-      email: 'ashleecastro@gmail.com',
-      type: 'Cliente',
-      status: 'Activo'
-    },
-    {
-      id: '2',
-      name: 'CONSUMIDOR FINAL',
-      address: 'CONSUMIDOR FINAL',
-      identification: '22222222',
-      identificationType: 'Consumidor Final',
-      phone: '3333333333333',
-      email: 'consumidorfinal@tienda.com',
-      type: 'Cliente',
-      status: 'Activo'
-    },
-    {
-      id: '3',
-      name: 'IVAN JESUS CASTRO RUIZ',
-      address: 'CALLE 18B No 17F - 24',
-      identification: '72009461',
-      identificationType: 'Cédula de Extranjería',
-      phone: '3003162985',
-      email: 'admin@tienda.com',
-      type: 'Empleado',
-      status: 'Activo'
-    },
-    {
-      id: '4',
-      name: 'luz anaya',
-      address: 'Cra53d#128a-41',
-      identification: '26254587',
-      identificationType: 'Cédula de Ciudadanía',
-      phone: '5254865',
-      email: '07luzca@gmail.com',
-      type: 'Cliente',
-      status: 'Activo'
-    },
-    {
-      id: '5',
-      name: 'SIRLEY CESPEDES',
-      address: 'Calle 18B No 17F - 24',
-      identification: '1045697508',
-      identificationType: 'Cédula de Extranjería',
-      phone: '302243805',
-      email: '07luzca@gmail.com',
-      type: 'Empleado',
-      status: 'Activo'
-    }
-  ]);
-
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
-  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [formData, setFormData] = useState<PersonFormData>(initialFormData);
-  const [editingPersonId, setEditingPersonId] = useState<string | null>(null);
-  const [deletingPersonId, setDeletingPersonId] = useState<string | null>(null);
+  const [filterType, setFilterType] = useState('Todos los tipos');
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [persons, setPersons] = useState<Person[]>(initialPersons);
 
+  // Filtrar personas según búsqueda y filtro
   const filteredPersons = persons.filter(person => {
-    const matchesSearch = 
-      person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.identification.includes(searchTerm) ||
-      person.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.phone.includes(searchTerm);
+    const matchesSearch = person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         person.identificationNumber.includes(searchTerm) ||
+                         person.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         person.phone.includes(searchTerm);
     
-    const matchesFilter = filterType === 'all' || person.type === filterType;
+    const matchesFilter = filterType === 'Todos los tipos' || person.type === filterType;
     
     return matchesSearch && matchesFilter;
   });
 
-  const handleNewPerson = () => {
-    setFormData(initialFormData);
-    setIsCreateModalOpen(true);
-  };
-
-  const handleEditPerson = (personId: string) => {
-    const person = persons.find(p => p.id === personId);
-    if (person) {
-      setFormData({
-        name: person.name,
-        address: person.address,
-        identification: person.identification,
-        identificationType: person.identificationType,
-        phone: person.phone,
-        email: person.email,
-        type: person.type,
-        status: person.status
-      });
-      setEditingPersonId(personId);
-      setIsEditModalOpen(true);
-    }
-  };
-
-  const handleDeletePerson = (personId: string) => {
-    setDeletingPersonId(personId);
-    setIsDeleteDialogOpen(true);
-  };
-
-  const handleCreateSubmit = () => {
+  const handleCreatePerson = (personData: Omit<Person, 'id'>) => {
     const newPerson: Person = {
-      id: Date.now().toString(),
-      ...formData
+      ...personData,
+      id: Date.now().toString()
     };
     setPersons([...persons, newPerson]);
-    setIsCreateModalOpen(false);
-    setFormData(initialFormData);
+    setShowCreateModal(false);
   };
 
-  const handleEditSubmit = () => {
-    if (editingPersonId) {
+  const handleEditPerson = (personData: Omit<Person, 'id'>) => {
+    if (selectedPerson) {
       setPersons(persons.map(person => 
-        person.id === editingPersonId 
-          ? { ...person, ...formData }
+        person.id === selectedPerson.id 
+          ? { ...personData, id: selectedPerson.id }
           : person
       ));
-      setIsEditModalOpen(false);
-      setEditingPersonId(null);
-      setFormData(initialFormData);
+      setShowEditModal(false);
+      setSelectedPerson(null);
     }
   };
 
-  const handleDeleteConfirm = () => {
-    if (deletingPersonId) {
-      setPersons(persons.filter(person => person.id !== deletingPersonId));
-      setIsDeleteDialogOpen(false);
-      setDeletingPersonId(null);
+  const handleDeletePerson = () => {
+    if (selectedPerson) {
+      setPersons(persons.filter(person => person.id !== selectedPerson.id));
+      setShowDeleteDialog(false);
+      setSelectedPerson(null);
     }
   };
 
-  const handleFormChange = useCallback((field: keyof PersonFormData, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  }, []);
-
-  const getTypeBadgeClass = (type: string) => {
-    switch (type) {
-      case 'Cliente':
-        return 'bg-blue-100 text-blue-800 hover:bg-blue-100';
-      case 'Empleado':
-        return 'bg-green-100 text-green-800 hover:bg-green-100';
-      case 'Proveedor':
-        return 'bg-purple-100 text-purple-800 hover:bg-purple-100';
-      default:
-        return 'bg-gray-100 text-gray-800 hover:bg-gray-100';
-    }
+  const openEditModal = (person: Person) => {
+    setSelectedPerson(person);
+    setShowEditModal(true);
   };
 
-  const getStatusBadgeClass = (status: string) => {
-    return status === 'Activo' 
-      ? 'bg-green-100 text-green-800 hover:bg-green-100' 
-      : 'bg-red-100 text-red-800 hover:bg-red-100';
+  const openDeleteDialog = (person: Person) => {
+    setSelectedPerson(person);
+    setShowDeleteDialog(true);
   };
-
-  const PersonForm = React.memo(({ isEdit = false }: { isEdit?: boolean }) => {
-    const formId = isEdit ? 'edit-form' : 'create-form';
-    
-    return (
-      <div className="grid gap-4 py-4">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-name`}>Nombre Completo *</Label>
-            <Input
-              id={`${formId}-name`}
-              value={formData.name}
-              onChange={(e) => handleFormChange('name', e.target.value)}
-              placeholder="Ingrese el nombre completo"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-email`}>Correo Electrónico *</Label>
-            <Input
-              id={`${formId}-email`}
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleFormChange('email', e.target.value)}
-              placeholder="correo@ejemplo.com"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-identificationType`}>Tipo de Identificación *</Label>
-            <Select value={formData.identificationType} onValueChange={(value) => handleFormChange('identificationType', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Cédula de Ciudadanía">Cédula de Ciudadanía</SelectItem>
-                <SelectItem value="Cédula de Extranjería">Cédula de Extranjería</SelectItem>
-                <SelectItem value="Pasaporte">Pasaporte</SelectItem>
-                <SelectItem value="NIT">NIT</SelectItem>
-                <SelectItem value="Consumidor Final">Consumidor Final</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-identification`}>Número de Identificación *</Label>
-            <Input
-              id={`${formId}-identification`}
-              value={formData.identification}
-              onChange={(e) => handleFormChange('identification', e.target.value)}
-              placeholder="Número de documento"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor={`${formId}-address`}>Dirección</Label>
-          <Input
-            id={`${formId}-address`}
-            value={formData.address}
-            onChange={(e) => handleFormChange('address', e.target.value)}
-            placeholder="Dirección completa"
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-phone`}>Teléfono</Label>
-            <Input
-              id={`${formId}-phone`}
-              value={formData.phone}
-              onChange={(e) => handleFormChange('phone', e.target.value)}
-              placeholder="Número de teléfono"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor={`${formId}-type`}>Tipo *</Label>
-            <Select value={formData.type} onValueChange={(value: 'Cliente' | 'Empleado' | 'Proveedor') => handleFormChange('type', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Seleccionar tipo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Cliente">Cliente</SelectItem>
-                <SelectItem value="Empleado">Empleado</SelectItem>
-                <SelectItem value="Proveedor">Proveedor</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor={`${formId}-status`}>Estado *</Label>
-          <Select value={formData.status} onValueChange={(value: 'Activo' | 'Inactivo') => handleFormChange('status', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar estado" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Activo">Activo</SelectItem>
-              <SelectItem value="Inactivo">Inactivo</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-    );
-  });
 
   return (
-    <div className="space-y-6">
+    <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Users className="h-5 w-5 text-blue-600" />
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+            <Users className="w-6 h-6 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Gestión de Personas</h1>
             <p className="text-gray-600">Administra clientes, empleados y proveedores</p>
           </div>
         </div>
-        
-        <Button onClick={handleNewPerson} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="h-4 w-4 mr-2" />
-          Nueva Persona
-        </Button>
+        <button
+          onClick={() => setShowCreateModal(true)}
+          className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Nueva Persona</span>
+        </button>
       </div>
 
-      {/* Search and Filter */}
-      <div className="flex items-center space-x-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-          <Input
+      {/* Búsqueda y filtros */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <input
+            type="text"
             placeholder="Buscar por nombre, identificación, email o teléfono..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        <div className="flex items-center space-x-2">
-          <Filter className="h-4 w-4 text-gray-400" />
-          <Select value={filterType} onValueChange={setFilterType}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Todos los tipos" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todos los tipos</SelectItem>
-              <SelectItem value="Cliente">Cliente</SelectItem>
-              <SelectItem value="Empleado">Empleado</SelectItem>
-              <SelectItem value="Proveedor">Proveedor</SelectItem>
-            </SelectContent>
-          </Select>
+        <div className="relative">
+          <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+          >
+            <option value="Todos los tipos">Todos los tipos</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Empleado">Empleado</option>
+            <option value="Proveedor">Proveedor</option>
+          </select>
         </div>
       </div>
 
-      {/* Persons Table Card */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg font-semibold">Lista de personas</CardTitle>
-          <p className="text-sm text-gray-600">{filteredPersons.length} personas registrados</p>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Persona</TableHead>
-                <TableHead>Identificación</TableHead>
-                <TableHead>Contacto</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
+      {/* Lista de personas */}
+      <div className="bg-white rounded-lg shadow">
+        <div className="p-6 border-b">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-gray-900">Lista de personas</h2>
+            <span className="text-sm text-gray-500">{filteredPersons.length} personas registrados</span>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Persona
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Identificación
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Contacto
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tipo
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Estado
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
               {filteredPersons.map((person) => (
-                <TableRow key={person.id}>
-                  <TableCell>
-                    <div className="flex items-center space-x-3">
-                      <div className="w-8 h-8 bg-blue-50 rounded-full flex items-center justify-center">
-                        <User className="h-4 w-4 text-blue-600" />
+                <tr key={person.id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                        <Users className="w-5 h-5 text-gray-600" />
                       </div>
-                      <div>
-                        <div className="font-medium">{person.name}</div>
+                      <div className="ml-4">
+                        <div className="text-sm font-medium text-gray-900">{person.name}</div>
                         <div className="text-sm text-gray-500">{person.address}</div>
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{person.identification}</div>
-                      <div className="text-sm text-gray-500">{person.identificationType}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <div className="font-medium">{person.phone}</div>
-                      <div className="text-sm text-gray-500">{person.email}</div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant="secondary"
-                      className={getTypeBadgeClass(person.type)}
-                    >
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{person.identificationNumber}</div>
+                    <div className="text-sm text-gray-500">{person.identificationType}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{person.phone}</div>
+                    <div className="text-sm text-gray-500">{person.email}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      person.type === 'Cliente' 
+                        ? 'bg-blue-100 text-blue-800'
+                        : person.type === 'Empleado'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-purple-100 text-purple-800'
+                    }`}>
                       {person.type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant="secondary"
-                      className={getStatusBadgeClass(person.status)}
-                    >
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                      person.status === 'Activo'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                    }`}>
                       {person.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEditPerson(person.id)}
-                        className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => openEditModal(person)}
+                        className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50"
                       >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeletePerson(person.id)}
-                        className="h-8 w-8 p-0 text-red-600 hover:text-red-700 hover:bg-red-50"
+                        <Edit className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => openDeleteDialog(person)}
+                        className="text-red-600 hover:text-red-900 p-1 rounded hover:bg-red-50"
                       >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     </div>
-                  </TableCell>
-                </TableRow>
+                  </td>
+                </tr>
               ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-      {/* Create Person Modal */}
-      <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Plus className="h-4 w-4 text-blue-600" />
-              </div>
-              <span>Nueva Persona</span>
-            </DialogTitle>
-            <DialogDescription>
-              Ingresa la información de la nueva persona. Los campos marcados con * son obligatorios.
-            </DialogDescription>
-          </DialogHeader>
-          <PersonForm />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleCreateSubmit} className="bg-blue-600 hover:bg-blue-700">
-              Crear Persona
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modal de crear persona */}
+      <PersonFormModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleCreatePerson}
+        mode="create"
+      />
 
-      {/* Edit Person Modal */}
-      <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
-          <DialogHeader>
-            <DialogTitle className="flex items-center space-x-2">
-              <div className="w-6 h-6 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Pencil className="h-4 w-4 text-blue-600" />
-              </div>
-              <span>Editar Persona</span>
-            </DialogTitle>
-            <DialogDescription>
-              Modifica la información de la persona. Los campos marcados con * son obligatorios.
-            </DialogDescription>
-          </DialogHeader>
-          <PersonForm isEdit={true} />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditModalOpen(false)}>
-              Cancelar
-            </Button>
-            <Button onClick={handleEditSubmit} className="bg-blue-600 hover:bg-blue-700">
-              Guardar Cambios
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* Modal de editar persona */}
+      <PersonFormModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedPerson(null);
+        }}
+        onSubmit={handleEditPerson}
+        person={selectedPerson}
+        mode="edit"
+      />
 
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. Esto eliminará permanentemente la persona
-              y removerá todos sus datos de nuestros servidores.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction 
-              onClick={handleDeleteConfirm}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Diálogo de confirmación de eliminación */}
+      {showDeleteDialog && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">¿Estás seguro?</h3>
+            <p className="text-gray-600 mb-6">
+              Esta acción no se puede deshacer. Esto eliminará permanentemente la persona y removerá todos sus datos de nuestros servidores.
+            </p>
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => {
+                  setShowDeleteDialog(false);
+                  setSelectedPerson(null);
+                }}
+                className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDeletePerson}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
