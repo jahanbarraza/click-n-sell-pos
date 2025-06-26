@@ -15,6 +15,7 @@ import { CustomerManagement } from '@/components/pos/CustomerManagement';
 import { UserManagement } from '@/components/pos/UserManagement';
 import { UpdatePassword } from '@/components/pos/UpdatePassword';
 import { Roles } from '@/components/pos/Roles';
+import { Persons } from '@/components/pos/Persons';
 import { Button } from '@/components/ui/button';
 import { LogOut, Key } from 'lucide-react';
 
@@ -78,6 +79,8 @@ const Index = () => {
         return <UserManagement />;
       case 'roles':
         return <Roles />;
+      case 'persons':
+        return <Persons />;
       case 'update-password':
         return <UpdatePassword />;
       default:

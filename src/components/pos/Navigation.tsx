@@ -58,7 +58,7 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
       label: 'Gestión Personas',
       icon: Users,
       children: [
-        { id: 'personas', label: 'Personas', icon: User },
+        { id: 'persons', label: 'Personas', icon: User },
         { id: 'users', label: 'Usuarios', icon: UserCheck },
         { id: 'roles', label: 'Roles', icon: Shield },
         { id: 'tipos-identificacion', label: 'Tipos de Identificación', icon: CreditCard }
