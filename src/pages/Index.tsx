@@ -10,7 +10,7 @@ import { Cart } from '@/components/pos/Cart';
 import { SalesHistory } from '@/components/pos/SalesHistory';
 import { ProductManagement } from '@/components/pos/ProductManagement';
 import { InventoryView } from '@/components/pos/InventoryView';
-import { CategoryManagement } from '@/components/pos/CategoryManagement';
+import { CategoriesComponent } from '@/components/pos/Categories';
 import { CustomerManagement } from '@/components/pos/CustomerManagement';
 import { UsersComponent } from '@/components/pos/Users';
 import { UpdatePassword } from '@/components/pos/UpdatePassword';
@@ -73,7 +73,7 @@ const Index = () => {
       case 'inventory':
         return <InventoryView />;
       case 'categories':
-        return <CategoryManagement />;
+        return <CategoriesComponent />;
       case 'customers':
         return <CustomerManagement />;
       case 'users':
