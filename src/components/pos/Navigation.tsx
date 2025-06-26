@@ -179,7 +179,7 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
             <Package className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">Nexus POS</h2>
+            <h2 className="font-semibold text-gray-900">StampOut POS</h2>
             <p className="text-xs text-gray-500">1.0.0</p>
           </div>
         </div>

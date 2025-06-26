@@ -16,6 +16,7 @@ import { UsersComponent } from '@/components/pos/Users';
 import { UpdatePassword } from '@/components/pos/UpdatePassword';
 import { Roles } from '@/components/pos/Roles';
 import { Persons } from '@/components/pos/Persons';
+import { TiposIdentificacionComponent } from '@/components/pos/TiposIdentificacion';
 import { Button } from '@/components/ui/button';
 import { LogOut, Key } from 'lucide-react';
 
@@ -81,6 +82,8 @@ const Index = () => {
         return <Roles />;
       case 'persons':
         return <Persons />;
+      case 'tipos-identificacion':
+        return <TiposIdentificacionComponent />;
       case 'update-password':
         return <UpdatePassword />;
       default:
