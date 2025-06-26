@@ -73,7 +73,7 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
         { id: 'categories', label: 'Categorías', icon: Tag },
         { id: 'subcategorias', label: 'Subcategorías', icon: Tags },
         { id: 'impuestos', label: 'Impuestos', icon: DollarSign },
-        { id: 'unidades', label: 'Unidades', icon: Ruler }
+        { id: 'units', label: 'Unidades', icon: Ruler }
       ]
     },
     {

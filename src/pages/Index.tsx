@@ -18,6 +18,7 @@ import { UpdatePassword } from '@/components/pos/UpdatePassword';
 import { Roles } from '@/components/pos/Roles';
 import { Persons } from '@/components/pos/Persons';
 import { TiposIdentificacionComponent } from '@/components/pos/TiposIdentificacion';
+import { Units } from '@/components/pos/Units';
 import { Button } from '@/components/ui/button';
 import { LogOut, Key } from 'lucide-react';
 
@@ -82,7 +83,7 @@ const Index = () => {
         return <InventoryView />;
       case 'categories':
         return <CategoriesComponent />;
-      case 'subcategories':
+      case 'subcategorias':
         return <SubcategoriesComponent />;
       case 'customers':
         return <CustomerManagement />;
@@ -94,6 +95,8 @@ const Index = () => {
         return <Persons />;
       case 'tipos-identificacion':
         return <TiposIdentificacionComponent />;
+      case 'units':
+        return <Units />;
       case 'update-password':
         return <UpdatePassword />;
       default:
