@@ -18,6 +18,8 @@ interface POSContextType {
   updateCartQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
   processSale: (paymentMethod: 'cash' | 'card' | 'digital') => void;
+  completeSale: (paymentMethod: 'cash' | 'card' | 'digital', customerName?: string) => Sale;
+  getCartTotal: () => { subtotal: number; tax: number; total: number };
   addCategory: (category: Category) => void;
   updateCategory: (category: Category) => void;
   deleteCategory: (categoryId: string) => void;
@@ -131,6 +133,46 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     setCart([]);
   };
 
+  const getCartTotal = () => {
+    const subtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    const tax = subtotal * 0.1; // 10% tax
+    const total = subtotal + tax;
+    return { subtotal, tax, total };
+  };
+
+  const completeSale = (paymentMethod: 'cash' | 'card' | 'digital', customerName?: string): Sale => {
+    const saleItems = cart.map(item => ({
+      product: item.product,
+      quantity: item.quantity,
+      price: item.product.price
+    }));
+
+    const { subtotal, tax, total } = getCartTotal();
+
+    const newSale: Sale = {
+      id: Math.random().toString(36).substring(7),
+      items: saleItems,
+      subtotal: subtotal,
+      tax: tax,
+      total: total,
+      timestamp: new Date(),
+      paymentMethod: paymentMethod,
+      customerName: customerName
+    };
+
+    setSales([...sales, newSale]);
+    setCart([]);
+
+    // Update product stock
+    saleItems.forEach(item => {
+      setProducts(prevProducts => prevProducts.map(product =>
+        product.id === item.product.id ? { ...product, stock: product.stock - item.quantity } : product
+      ));
+    });
+
+    return newSale;
+  };
+
   const processSale = (paymentMethod: 'cash' | 'card' | 'digital') => {
     const saleItems = cart.map(item => ({
       product: item.product,
@@ -215,6 +257,8 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     updateCartQuantity,
     clearCart,
     processSale,
+    completeSale,
+    getCartTotal,
     addCategory,
     updateCategory,
     deleteCategory,

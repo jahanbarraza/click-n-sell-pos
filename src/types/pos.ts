@@ -33,4 +33,26 @@ export interface InventoryAlert {
   minimumStock: number;
 }
 
+export interface Category {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'cashier';
+  createdAt: Date;
+}
+
 export type UserRole = 'admin' | 'employee';

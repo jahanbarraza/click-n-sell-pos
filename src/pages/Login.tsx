@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,8 +13,16 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
+
+  // Redireccionar si ya está autenticado
+  useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,6 +43,8 @@ const Login = () => {
         title: "Éxito",
         description: "Inicio de sesión exitoso"
       });
+      // Redireccionar al dashboard
+      navigate('/');
     } else {
       toast({
         title: "Error",
@@ -106,6 +117,7 @@ const Login = () => {
             <div className="text-xs space-y-1 text-gray-600">
               <p><strong>Admin:</strong> admin@test.com / admin123</p>
               <p><strong>Cajero:</strong> cajero@test.com / cajero123</p>
+              <p><strong>Jahan:</strong> jahanyu@gmail.com / admin123</p>
             </div>
           </div>
         </CardContent>

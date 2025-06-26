@@ -33,8 +33,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     // Verificar si hay un usuario guardado en localStorage
     const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+    const isAuthenticated = localStorage.getItem('isAuthenticated');
+    
+    if (savedUser && isAuthenticated === 'true') {
+      try {
+        const userData = JSON.parse(savedUser);
+        setUser(userData);
+      } catch (error) {
+        console.error('Error al parsear datos de usuario:', error);
+        localStorage.removeItem('user');
+        localStorage.removeItem('isAuthenticated');
+      }
     }
     setIsLoading(false);
   }, []);
@@ -43,28 +52,52 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsLoading(true);
     
     try {
-      // TODO: Reemplazar con llamada real al backend
-      // Simulación de login
-      if (email === 'admin@test.com' && password === 'admin123') {
-        const userData = {
-          id: '1',
-          email: email,
-          name: 'Administrador',
-          role: 'admin' as const
-        };
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
-        setIsLoading(false);
-        return true;
-      } else if (email === 'cajero@test.com' && password === 'cajero123') {
-        const userData = {
-          id: '2',
-          email: email,
-          name: 'Cajero',
-          role: 'cashier' as const
-        };
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+      // Simulación de delay de API
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Credenciales válidas predefinidas
+      const validCredentials = [
+        {
+          email: 'admin@test.com',
+          password: 'admin123',
+          userData: {
+            id: '1',
+            email: 'admin@test.com',
+            name: 'Administrador',
+            role: 'admin' as const
+          }
+        },
+        {
+          email: 'cajero@test.com',
+          password: 'cajero123',
+          userData: {
+            id: '2',
+            email: 'cajero@test.com',
+            name: 'Cajero',
+            role: 'cashier' as const
+          }
+        },
+        {
+          email: 'jahanyu@gmail.com',
+          password: 'admin123',
+          userData: {
+            id: '3',
+            email: 'jahanyu@gmail.com',
+            name: 'Jahan Barraza',
+            role: 'admin' as const
+          }
+        }
+      ];
+
+      // Buscar credenciales válidas
+      const validUser = validCredentials.find(
+        cred => cred.email === email && cred.password === password
+      );
+
+      if (validUser) {
+        setUser(validUser.userData);
+        localStorage.setItem('user', JSON.stringify(validUser.userData));
+        localStorage.setItem('isAuthenticated', 'true');
         setIsLoading(false);
         return true;
       }
@@ -81,6 +114,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
+    localStorage.removeItem('isAuthenticated');
   };
 
   const updatePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
