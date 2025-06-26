@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -213,12 +213,12 @@ export const Persons = () => {
     }
   };
 
-  const handleFormChange = (field: keyof PersonFormData, value: string) => {
+  const handleFormChange = useCallback((field: keyof PersonFormData, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
     }));
-  };
+  }, []);
 
   const getTypeBadgeClass = (type: string) => {
     switch (type) {
@@ -239,106 +239,110 @@ export const Persons = () => {
       : 'bg-red-100 text-red-800 hover:bg-red-100';
   };
 
-  const PersonForm = ({ isEdit = false }: { isEdit?: boolean }) => (
-    <div className="grid gap-4 py-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Nombre Completo *</Label>
-          <Input
-            id="name"
-            value={formData.name}
-            onChange={(e) => handleFormChange('name', e.target.value)}
-            placeholder="Ingrese el nombre completo"
-          />
+  const PersonForm = React.memo(({ isEdit = false }: { isEdit?: boolean }) => {
+    const formId = isEdit ? 'edit-form' : 'create-form';
+    
+    return (
+      <div className="grid gap-4 py-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-name`}>Nombre Completo *</Label>
+            <Input
+              id={`${formId}-name`}
+              value={formData.name}
+              onChange={(e) => handleFormChange('name', e.target.value)}
+              placeholder="Ingrese el nombre completo"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-email`}>Correo Electrónico *</Label>
+            <Input
+              id={`${formId}-email`}
+              type="email"
+              value={formData.email}
+              onChange={(e) => handleFormChange('email', e.target.value)}
+              placeholder="correo@ejemplo.com"
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Correo Electrónico *</Label>
-          <Input
-            id="email"
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleFormChange('email', e.target.value)}
-            placeholder="correo@ejemplo.com"
-          />
-        </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-identificationType`}>Tipo de Identificación *</Label>
+            <Select value={formData.identificationType} onValueChange={(value) => handleFormChange('identificationType', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cédula de Ciudadanía">Cédula de Ciudadanía</SelectItem>
+                <SelectItem value="Cédula de Extranjería">Cédula de Extranjería</SelectItem>
+                <SelectItem value="Pasaporte">Pasaporte</SelectItem>
+                <SelectItem value="NIT">NIT</SelectItem>
+                <SelectItem value="Consumidor Final">Consumidor Final</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-identification`}>Número de Identificación *</Label>
+            <Input
+              id={`${formId}-identification`}
+              value={formData.identification}
+              onChange={(e) => handleFormChange('identification', e.target.value)}
+              placeholder="Número de documento"
+            />
+          </div>
+        </div>
+
         <div className="space-y-2">
-          <Label htmlFor="identificationType">Tipo de Identificación *</Label>
-          <Select value={formData.identificationType} onValueChange={(value) => handleFormChange('identificationType', value)}>
+          <Label htmlFor={`${formId}-address`}>Dirección</Label>
+          <Input
+            id={`${formId}-address`}
+            value={formData.address}
+            onChange={(e) => handleFormChange('address', e.target.value)}
+            placeholder="Dirección completa"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-phone`}>Teléfono</Label>
+            <Input
+              id={`${formId}-phone`}
+              value={formData.phone}
+              onChange={(e) => handleFormChange('phone', e.target.value)}
+              placeholder="Número de teléfono"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor={`${formId}-type`}>Tipo *</Label>
+            <Select value={formData.type} onValueChange={(value: 'Cliente' | 'Empleado' | 'Proveedor') => handleFormChange('type', value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar tipo" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Cliente">Cliente</SelectItem>
+                <SelectItem value="Empleado">Empleado</SelectItem>
+                <SelectItem value="Proveedor">Proveedor</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor={`${formId}-status`}>Estado *</Label>
+          <Select value={formData.status} onValueChange={(value: 'Activo' | 'Inactivo') => handleFormChange('status', value)}>
             <SelectTrigger>
-              <SelectValue placeholder="Seleccionar tipo" />
+              <SelectValue placeholder="Seleccionar estado" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Cédula de Ciudadanía">Cédula de Ciudadanía</SelectItem>
-              <SelectItem value="Cédula de Extranjería">Cédula de Extranjería</SelectItem>
-              <SelectItem value="Pasaporte">Pasaporte</SelectItem>
-              <SelectItem value="NIT">NIT</SelectItem>
-              <SelectItem value="Consumidor Final">Consumidor Final</SelectItem>
+              <SelectItem value="Activo">Activo</SelectItem>
+              <SelectItem value="Inactivo">Inactivo</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="identification">Número de Identificación *</Label>
-          <Input
-            id="identification"
-            value={formData.identification}
-            onChange={(e) => handleFormChange('identification', e.target.value)}
-            placeholder="Número de documento"
-          />
-        </div>
       </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="address">Dirección</Label>
-        <Input
-          id="address"
-          value={formData.address}
-          onChange={(e) => handleFormChange('address', e.target.value)}
-          placeholder="Dirección completa"
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="phone">Teléfono</Label>
-          <Input
-            id="phone"
-            value={formData.phone}
-            onChange={(e) => handleFormChange('phone', e.target.value)}
-            placeholder="Número de teléfono"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="type">Tipo *</Label>
-          <Select value={formData.type} onValueChange={(value: 'Cliente' | 'Empleado' | 'Proveedor') => handleFormChange('type', value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Seleccionar tipo" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Cliente">Cliente</SelectItem>
-              <SelectItem value="Empleado">Empleado</SelectItem>
-              <SelectItem value="Proveedor">Proveedor</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="status">Estado *</Label>
-        <Select value={formData.status} onValueChange={(value: 'Activo' | 'Inactivo') => handleFormChange('status', value)}>
-          <SelectTrigger>
-            <SelectValue placeholder="Seleccionar estado" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Activo">Activo</SelectItem>
-            <SelectItem value="Inactivo">Inactivo</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-    </div>
-  );
+    );
+  });
 
   return (
     <div className="space-y-6">
