@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { 
   LayoutDashboard,
   Building2,
-  Store2,
+  Store,
   Building,
   Users,
   User,
@@ -41,7 +41,7 @@ interface MenuItem {
 
 export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
   const { user } = useAuth();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['gestion-ventas']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(['gestion-ventas', 'gestion-organizacion']);
 
   const menuItems: MenuItem[] = [
     {
@@ -55,7 +55,7 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
       icon: Building2,
       children: [
         { id: 'companies', label: 'Compañías', icon: Building },
-        { id: 'stores', label: 'Tiendas', icon: Store2 }
+        { id: 'stores', label: 'Tiendas', icon: Store }
       ]
     },
     {
@@ -88,7 +88,7 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
       children: [
         { id: 'pos', label: 'Punto de Venta', icon: ShoppingCart },
         { id: 'sales-reports', label: 'Reportes de Ventas', icon: BarChart3 },
-        { id: 'inventory-management', label: 'Inventario', icon: Warehouse }
+        { id: 'inventory', label: 'Inventario', icon: Warehouse }
       ]
     },
     {

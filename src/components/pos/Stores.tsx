@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,11 +12,11 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { StoreFormModal } from './StoreFormModal';
-import { Store2, Plus, Search, Edit, Trash2 } from 'lucide-react';
-import { Store } from '@/types/organization';
+import { Store, Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { Store as StoreType } from '@/types/organization';
 
 export const Stores = () => {
-  const [stores, setStores] = useState<Store[]>([
+  const [stores, setStores] = useState<StoreType[]>([
     {
       id: '1',
       name: 'Calle 30',
@@ -73,7 +72,7 @@ export const Stores = () => {
   ]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  const [selectedStore, setSelectedStore] = useState<StoreType | null>(null);
 
   const filteredStores = stores.filter(store =>
     store.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -82,8 +81,8 @@ export const Stores = () => {
     store.companyName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddStore = (storeData: Omit<Store, 'id' | 'createdAt'>) => {
-    const newStore: Store = {
+  const handleAddStore = (storeData: Omit<StoreType, 'id' | 'createdAt'>) => {
+    const newStore: StoreType = {
       ...storeData,
       id: Math.random().toString(36).substring(7),
       createdAt: new Date()
@@ -92,9 +91,9 @@ export const Stores = () => {
     setIsModalOpen(false);
   };
 
-  const handleEditStore = (storeData: Omit<Store, 'id' | 'createdAt'>) => {
+  const handleEditStore = (storeData: Omit<StoreType, 'id' | 'createdAt'>) => {
     if (selectedStore) {
-      const updatedStore: Store = {
+      const updatedStore: StoreType = {
         ...storeData,
         id: selectedStore.id,
         createdAt: selectedStore.createdAt
@@ -115,7 +114,7 @@ export const Stores = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-3">
-          <Store2 className="h-8 w-8 text-blue-600" />
+          <Store className="h-8 w-8 text-blue-600" />
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Gestión de Tiendas</h1>
             <p className="text-gray-600">Administra las tiendas del sistema</p>
@@ -206,7 +205,7 @@ export const Stores = () => {
 
           {filteredStores.length === 0 && (
             <div className="text-center py-8">
-              <Store2 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <Store className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No se encontraron tiendas</p>
             </div>
           )}
