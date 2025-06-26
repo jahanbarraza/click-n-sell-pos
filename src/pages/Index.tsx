@@ -12,7 +12,7 @@ import { ProductManagement } from '@/components/pos/ProductManagement';
 import { InventoryView } from '@/components/pos/InventoryView';
 import { CategoryManagement } from '@/components/pos/CategoryManagement';
 import { CustomerManagement } from '@/components/pos/CustomerManagement';
-import { UserManagement } from '@/components/pos/UserManagement';
+import { UsersComponent } from '@/components/pos/Users';
 import { UpdatePassword } from '@/components/pos/UpdatePassword';
 import { Roles } from '@/components/pos/Roles';
 import { Persons } from '@/components/pos/Persons';
@@ -76,7 +76,7 @@ const Index = () => {
       case 'customers':
         return <CustomerManagement />;
       case 'users':
-        return <UserManagement />;
+        return <UsersComponent />;
       case 'roles':
         return <Roles />;
       case 'persons':
