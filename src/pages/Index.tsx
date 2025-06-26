@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,8 +7,11 @@ import { Dashboard } from '@/components/pos/Dashboard';
 import { ProductGrid } from '@/components/pos/ProductGrid';
 import { Cart } from '@/components/pos/Cart';
 import { SalesHistory } from '@/components/pos/SalesHistory';
+import { SalesReports } from '@/components/pos/SalesReports';
 import { ProductManagement } from '@/components/pos/ProductManagement';
 import { InventoryView } from '@/components/pos/InventoryView';
+import { InventoryManagement } from '@/components/pos/InventoryManagement';
+import { InventoryMovements } from '@/components/pos/InventoryMovements';
 import { CategoriesComponent } from '@/components/pos/Categories';
 import { SubcategoriesComponent } from '@/components/pos/Subcategories';
 import { CustomerManagement } from '@/components/pos/CustomerManagement';
@@ -75,12 +77,18 @@ const Index = () => {
         );
       case 'sales':
         return <SalesHistory />;
+      case 'sales-reports':
+        return <SalesReports />;
       case 'dashboard':
         return <Dashboard />;
       case 'products':
         return <ProductManagement />;
       case 'inventory':
         return <InventoryView />;
+      case 'inventory-management':
+        return <InventoryManagement />;
+      case 'inventory-movements':
+        return <InventoryMovements />;
       case 'categories':
         return <CategoriesComponent />;
       case 'subcategorias':

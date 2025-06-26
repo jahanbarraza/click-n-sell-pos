@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -82,8 +81,8 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
       icon: ShoppingCart,
       children: [
         { id: 'pos', label: 'Punto de Venta', icon: ShoppingCart },
-        { id: 'sales', label: 'Reportes de Ventas', icon: BarChart3 },
-        { id: 'inventory', label: 'Inventario', icon: Warehouse }
+        { id: 'sales-reports', label: 'Reportes de Ventas', icon: BarChart3 },
+        { id: 'inventory-management', label: 'Inventario', icon: Warehouse }
       ]
     },
     {
@@ -91,7 +90,7 @@ export const Navigation = ({ activeView, onViewChange }: NavigationProps) => {
       label: 'Gestión Inventario',
       icon: Warehouse,
       children: [
-        { id: 'entradas-salidas', label: 'Entradas y Salidas', icon: TrendingUp }
+        { id: 'inventory-movements', label: 'Entradas y Salidas', icon: TrendingUp }
       ]
     },
     {

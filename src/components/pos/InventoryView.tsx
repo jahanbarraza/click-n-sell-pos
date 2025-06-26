@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -29,7 +28,8 @@ export const InventoryView = () => {
     if (!product) return;
 
     const newStock = Math.max(0, product.stock + change);
-    updateProduct(productId, { stock: newStock });
+    const updatedProduct = { ...product, stock: newStock };
+    updateProduct(updatedProduct);
 
     toast({
       title: "Stock actualizado",

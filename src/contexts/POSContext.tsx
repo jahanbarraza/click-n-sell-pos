@@ -180,11 +180,13 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
       price: item.product.price
     }));
 
-    const total = saleItems.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+    const { subtotal, tax, total } = getCartTotal();
 
     const newSale: Sale = {
       id: Math.random().toString(36).substring(7),
       items: saleItems,
+      subtotal: subtotal,
+      tax: tax,
       total: total,
       timestamp: new Date(),
       paymentMethod: paymentMethod
