@@ -382,6 +382,3 @@ export const SubcategoriesComponent: React.FC = () => {
   );
 };
 
-
-export { SubcategoriesComponent };
-

@@ -22,7 +22,10 @@ import { Button } from '@/components/ui/button';
 import { LogOut, Key } from 'lucide-react';
 
 const Index = () => {
-  const [activeView, setActiveView] = useState('pos');
+  const [activeView, setActiveView] = useState(() => {
+    const hash = window.location.hash.substring(1);
+    return hash || 'pos';
+  });
   const { user, logout, isLoading } = useAuth();
   const navigate = useNavigate();
 
@@ -31,6 +34,10 @@ const Index = () => {
       navigate('/login');
     }
   }, [user, isLoading, navigate]);
+
+  useEffect(() => {
+    window.location.hash = activeView;
+  }, [activeView]);
 
   const handleLogout = () => {
     logout();
