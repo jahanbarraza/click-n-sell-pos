@@ -84,51 +84,40 @@ const Index = () => {
 
   return (
     <POSProvider>
-      <div className="min-h-screen bg-gray-50">
-        <div className="grid grid-cols-12 gap-6 p-6 h-screen">
-          {/* Sidebar Navigation */}
-          <div className="col-span-12 lg:col-span-2">
-            <div className="space-y-4">
-              <Navigation activeView={activeView} onViewChange={setActiveView} />
+      <div className="min-h-screen bg-gray-50 flex">
+        {/* Sidebar Navigation */}
+        <Navigation activeView={activeView} onViewChange={setActiveView} />
+
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col">
+          {/* Top Bar */}
+          <div className="bg-white border-b border-gray-200 p-4">
+            <div className="flex items-center justify-end space-x-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveView('update-password')}
+                className="flex items-center space-x-2"
+              >
+                <Key className="h-4 w-4" />
+                <span>Cambiar Contraseña</span>
+              </Button>
               
-              {/* User Info and Actions */}
-              <div className="bg-white p-4 rounded-lg border space-y-3">
-                <div className="text-sm">
-                  <p className="font-medium">{user.name}</p>
-                  <p className="text-gray-500">{user.email}</p>
-                  <p className="text-xs text-gray-400 capitalize">Rol: {user.role}</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setActiveView('update-password')}
-                    className="w-full justify-start"
-                  >
-                    <Key className="mr-2 h-4 w-4" />
-                    Cambiar Contraseña
-                  </Button>
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleLogout}
-                    className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Cerrar Sesión
-                  </Button>
-                </div>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="flex items-center space-x-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Cerrar Sesión</span>
+              </Button>
             </div>
           </div>
 
-          {/* Main Content */}
-          <div className="col-span-12 lg:col-span-10">
-            <div className="h-full">
-              {renderMainContent()}
-            </div>
+          {/* Page Content */}
+          <div className="flex-1 p-6">
+            {renderMainContent()}
           </div>
         </div>
       </div>
