@@ -149,7 +149,7 @@ export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNav
               >
                 <LayoutDashboard className="h-4 w-4" />
               </Button>
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 Dashboard
               </div>
             </div>
@@ -163,7 +163,7 @@ export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNav
               >
                 <ShoppingCart className="h-4 w-4" />
               </Button>
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                 Punto de Venta
               </div>
             </div>
@@ -177,7 +177,7 @@ export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNav
               >
                 <BarChart3 className="h-4 w-4" />
               </Button>
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
                 Reporte de Ventas
               </div>
             </div>

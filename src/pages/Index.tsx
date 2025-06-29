@@ -64,8 +64,8 @@ const Index = () => {
     switch (activeView) {
       case 'pos':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-full">
-            <div className="lg:col-span-1">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+            <div className="lg:col-span-2">
               <ProductGrid />
             </div>
             <div className="lg:col-span-1">
@@ -126,7 +126,7 @@ const Index = () => {
 
         {/* Main Content - Limited width container */}
         <div className="flex-1 flex justify-center">
-          <div className="w-full max-w-7xl px-6 py-6">
+          <div className="w-full max-w-6xl px-6 py-6">
             {renderMainContent()}
           </div>
         </div>
