@@ -124,9 +124,11 @@ const Index = () => {
         {/* Horizontal Navigation */}
         <HorizontalNavigation activeView={activeView} onViewChange={setActiveView} />
 
-        {/* Main Content */}
-        <div className="flex-1 p-6">
-          {renderMainContent()}
+        {/* Main Content - Limited width container */}
+        <div className="flex-1 flex justify-center">
+          <div className="w-full max-w-7xl px-6 py-6">
+            {renderMainContent()}
+          </div>
         </div>
       </div>
     </POSProvider>

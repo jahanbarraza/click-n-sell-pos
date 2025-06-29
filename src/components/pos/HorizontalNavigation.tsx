@@ -140,35 +140,47 @@ export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNav
 
           {/* Quick Access Icons */}
           <div className="flex items-center space-x-2">
-            <Button
-              variant={activeView === 'dashboard' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onViewChange('dashboard')}
-              className="flex items-center space-x-2"
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              <span className="hidden sm:inline">Dashboard</span>
-            </Button>
+            <div className="relative group">
+              <Button
+                variant={activeView === 'dashboard' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('dashboard')}
+                className="p-2"
+              >
+                <LayoutDashboard className="h-4 w-4" />
+              </Button>
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                Dashboard
+              </div>
+            </div>
             
-            <Button
-              variant={activeView === 'pos' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onViewChange('pos')}
-              className="flex items-center space-x-2"
-            >
-              <ShoppingCart className="h-4 w-4" />
-              <span className="hidden sm:inline">Punto de Venta</span>
-            </Button>
+            <div className="relative group">
+              <Button
+                variant={activeView === 'pos' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('pos')}
+                className="p-2"
+              >
+                <ShoppingCart className="h-4 w-4" />
+              </Button>
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                Punto de Venta
+              </div>
+            </div>
             
-            <Button
-              variant={activeView === 'sales-reports' ? 'default' : 'ghost'}
-              size="sm"
-              onClick={() => onViewChange('sales-reports')}
-              className="flex items-center space-x-2"
-            >
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Reporte de Ventas</span>
-            </Button>
+            <div className="relative group">
+              <Button
+                variant={activeView === 'sales-reports' ? 'default' : 'ghost'}
+                size="sm"
+                onClick={() => onViewChange('sales-reports')}
+                className="p-2"
+              >
+                <BarChart3 className="h-4 w-4" />
+              </Button>
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                Reporte de Ventas
+              </div>
+            </div>
           </div>
 
           {/* User Info and Logout */}
