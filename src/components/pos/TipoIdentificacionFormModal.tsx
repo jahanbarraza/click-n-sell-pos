@@ -207,7 +207,7 @@ export const TipoIdentificacionFormModal: React.FC<TipoIdentificacionFormModalPr
               />
               <p className="text-xs text-gray-500 mt-1">
                 Expresión regular para validar el formato del documento. 
-                Ejemplos: ^[0-9]{8,10}$ (números), ^[A-Z]{2}[0-9]{6}$ (letras + números)
+                Ejemplos: ^[0-9]{"{8,10}"}$ (números), ^[A-Z]{"{2}"}[0-9]{"{6}"}$ (letras + números)
               </p>
             </div>
 
@@ -232,10 +232,10 @@ export const TipoIdentificacionFormModal: React.FC<TipoIdentificacionFormModalPr
           <div className="bg-gray-50 p-4 rounded-lg">
             <h4 className="text-sm font-medium text-gray-700 mb-2">Ejemplos de formatos comunes:</h4>
             <div className="text-xs text-gray-600 space-y-1">
-              <div><code className="bg-white px-1 rounded">^[0-9]{8,10}$</code> - Números de 8 a 10 dígitos</div>
-              <div><code className="bg-white px-1 rounded">^[0-9]{9,10}-[0-9]$</code> - NIT (9-10 dígitos + guión + dígito)</div>
-              <div><code className="bg-white px-1 rounded">^[A-Z]{2}[0-9]{6}$</code> - 2 letras seguidas de 6 números</div>
-              <div><code className="bg-white px-1 rounded">^[0-9]{6,10}$</code> - Números de 6 a 10 dígitos</div>
+              <div><code className="bg-white px-1 rounded">^[0-9]{"{8,10}"}$</code> - Números de 8 a 10 dígitos</div>
+              <div><code className="bg-white px-1 rounded">^[0-9]{"{9,10}"}-[0-9]$</code> - NIT (9-10 dígitos + guión + dígito)</div>
+              <div><code className="bg-white px-1 rounded">^[A-Z]{"{2}"}[0-9]{"{6}"}$</code> - 2 letras seguidas de 6 números</div>
+              <div><code className="bg-white px-1 rounded">^[0-9]{"{6,10}"}$</code> - Números de 6 a 10 dígitos</div>
             </div>
           </div>
 

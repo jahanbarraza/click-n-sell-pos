@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
-import { Navigation } from '@/components/pos/Navigation';
+import { HorizontalNavigation } from '@/components/pos/HorizontalNavigation';
 import { Dashboard } from '@/components/pos/Dashboard';
 import { ProductGrid } from '@/components/pos/ProductGrid';
 import { Cart } from '@/components/pos/Cart';
@@ -21,6 +21,7 @@ import { UpdatePassword } from '@/components/pos/UpdatePassword';
 import { Roles } from '@/components/pos/Roles';
 import { Persons } from '@/components/pos/Persons';
 import { TiposIdentificacionComponent } from '@/components/pos/TiposIdentificacion';
+import { ImpuestosComponent } from '@/components/pos/ImpuestosComponent';
 import { Units } from '@/components/pos/Units';
 import { Companies } from '@/components/pos/Companies';
 import { Stores } from '@/components/pos/Stores';
@@ -100,6 +101,8 @@ const Index = () => {
         return <CategoriesComponent />;
       case 'subcategorias':
         return <SubcategoriesComponent />;
+      case 'impuestos':
+        return <ImpuestosComponent />;
       case 'customers':
         return <CustomerManagement />;
       case 'users':
@@ -121,9 +124,9 @@ const Index = () => {
 
   return (
     <POSProvider>
-      <div className="min-h-screen bg-gray-50 flex">
-        {/* Sidebar Navigation */}
-        <Navigation activeView={activeView} onViewChange={setActiveView} />
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        {/* Horizontal Navigation */}
+        <HorizontalNavigation activeView={activeView} onViewChange={setActiveView} />
 
         {/* Main Content */}
         <div className="flex-1 flex flex-col">
