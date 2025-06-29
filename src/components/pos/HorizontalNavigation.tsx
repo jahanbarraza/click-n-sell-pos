@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard,
   Building,
@@ -13,7 +14,9 @@ import {
   FileText,
   ChevronDown,
   Settings,
-  User
+  User,
+  BarChart3,
+  LogOut
 } from 'lucide-react';
 
 interface HorizontalNavigationProps {
@@ -29,8 +32,14 @@ interface MenuItem {
 }
 
 export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNavigationProps) => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   const menuItems: MenuItem[] = [
     {
@@ -129,7 +138,40 @@ export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNav
             </div>
           </div>
 
-          {/* User Info */}
+          {/* Quick Access Icons */}
+          <div className="flex items-center space-x-2">
+            <Button
+              variant={activeView === 'dashboard' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => onViewChange('dashboard')}
+              className="flex items-center space-x-2"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              <span className="hidden sm:inline">Dashboard</span>
+            </Button>
+            
+            <Button
+              variant={activeView === 'pos' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => onViewChange('pos')}
+              className="flex items-center space-x-2"
+            >
+              <ShoppingCart className="h-4 w-4" />
+              <span className="hidden sm:inline">Punto de Venta</span>
+            </Button>
+            
+            <Button
+              variant={activeView === 'sales-reports' ? 'default' : 'ghost'}
+              size="sm"
+              onClick={() => onViewChange('sales-reports')}
+              className="flex items-center space-x-2"
+            >
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">Reporte de Ventas</span>
+            </Button>
+          </div>
+
+          {/* User Info and Logout */}
           <div className="flex items-center space-x-3">
             <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
               <span className="text-blue-600 font-medium text-sm">
@@ -144,6 +186,14 @@ export const HorizontalNavigation = ({ activeView, onViewChange }: HorizontalNav
                 {user?.role === 'admin' ? 'Administrador' : 'Usuario'}
               </Badge>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            >
+              <LogOut className="h-4 w-4" />
+            </Button>
           </div>
         </div>
       </div>

@@ -25,15 +25,14 @@ import { ImpuestosComponent } from '@/components/pos/ImpuestosComponent';
 import { Units } from '@/components/pos/Units';
 import { Companies } from '@/components/pos/Companies';
 import { Stores } from '@/components/pos/Stores';
-import { Button } from '@/components/ui/button';
-import { LogOut, Key } from 'lucide-react';
+import { CierreDiario } from '@/components/pos/CierreDiario';
 
 const Index = () => {
   const [activeView, setActiveView] = useState(() => {
     const hash = window.location.hash.substring(1);
     return hash || 'pos';
   });
-  const { user, logout, isLoading } = useAuth();
+  const { user, isLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,11 +44,6 @@ const Index = () => {
   useEffect(() => {
     window.location.hash = activeView;
   }, [activeView]);
-
-  const handleLogout = () => {
-    logout();
-    navigate('/login');
-  };
 
   if (isLoading) {
     return (
@@ -117,6 +111,8 @@ const Index = () => {
         return <Units />;
       case 'update-password':
         return <UpdatePassword />;
+      case 'cierre-diario':
+        return <CierreDiario />;
       default:
         return <div>Vista no encontrada</div>;
     }
@@ -129,36 +125,8 @@ const Index = () => {
         <HorizontalNavigation activeView={activeView} onViewChange={setActiveView} />
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col">
-          {/* Top Bar */}
-          <div className="bg-white border-b border-gray-200 p-4">
-            <div className="flex items-center justify-end space-x-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveView('update-password')}
-                className="flex items-center space-x-2"
-              >
-                <Key className="h-4 w-4" />
-                <span>Cambiar Contraseña</span>
-              </Button>
-              
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleLogout}
-                className="flex items-center space-x-2 text-red-600 hover:text-red-700 hover:bg-red-50"
-              >
-                <LogOut className="h-4 w-4" />
-                <span>Cerrar Sesión</span>
-              </Button>
-            </div>
-          </div>
-
-          {/* Page Content */}
-          <div className="flex-1 p-6">
-            {renderMainContent()}
-          </div>
+        <div className="flex-1 p-6">
+          {renderMainContent()}
         </div>
       </div>
     </POSProvider>
