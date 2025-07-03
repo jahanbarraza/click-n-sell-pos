@@ -9,6 +9,7 @@ import { SalesHistory } from '@/components/pos/SalesHistory';
 import { InventoryView } from '@/components/pos/InventoryView';
 import { Dashboard } from '@/components/pos/Dashboard';
 import { CashRegisterControl } from '@/components/pos/CashRegisterControl';
+import { ProductManagement } from '@/components/pos/ProductManagement';
 
 export default function Index() {
   const { user, logout } = useAuth();
@@ -66,6 +67,8 @@ export default function Index() {
         return <InventoryView />;
       case 'dashboard':
         return <Dashboard />;
+      case 'products':
+        return <ProductManagement />;
       case 'companies':
         return (
           <div className="text-center py-12">
@@ -91,13 +94,6 @@ export default function Index() {
         return (
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
-            <p className="text-gray-600">Módulo en desarrollo</p>
-          </div>
-        );
-      case 'products':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Gestión de Productos</h2>
             <p className="text-gray-600">Módulo en desarrollo</p>
           </div>
         );
