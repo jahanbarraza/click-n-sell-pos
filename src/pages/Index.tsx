@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
 import { HorizontalNavigation } from '@/components/pos/HorizontalNavigation';
@@ -8,10 +8,28 @@ import { Cart } from '@/components/pos/Cart';
 import { SalesHistory } from '@/components/pos/SalesHistory';
 import { InventoryView } from '@/components/pos/InventoryView';
 import { Dashboard } from '@/components/pos/Dashboard';
+import { CashRegisterControl } from '@/components/pos/CashRegisterControl';
 
 export default function Index() {
   const { user, logout } = useAuth();
   const [activeView, setActiveView] = useState('pos');
+
+  // Check for hash in URL to set initial view
+  useEffect(() => {
+    const hash = window.location.hash.replace('#', '');
+    if (hash && hash !== '__lovable_token') {
+      setActiveView(hash);
+    }
+  }, []);
+
+  // Update URL hash when view changes
+  useEffect(() => {
+    if (activeView !== 'pos') {
+      window.history.replaceState(null, '', `#${activeView}`);
+    } else {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, [activeView]);
 
   if (!user) {
     return (
@@ -24,33 +42,83 @@ export default function Index() {
     );
   }
 
+  console.log('Current active view:', activeView);
+
   const renderContent = () => {
     switch (activeView) {
       case 'pos':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-            <div className="lg:col-span-2">
-              <ProductGrid />
-            </div>
-            <div className="lg:col-span-1">
-              <Cart />
+          <div className="space-y-6">
+            <CashRegisterControl />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+              <div className="lg:col-span-2">
+                <ProductGrid />
+              </div>
+              <div className="lg:col-span-1">
+                <Cart />
+              </div>
             </div>
           </div>
         );
-      case 'sales':
+      case 'sales-reports':
         return <SalesHistory />;
       case 'inventory':
         return <InventoryView />;
       case 'dashboard':
         return <Dashboard />;
+      case 'companies':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Gestión de Compañías</h2>
+            <p className="text-gray-600">Módulo en desarrollo</p>
+          </div>
+        );
+      case 'stores':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Gestión de Tiendas</h2>
+            <p className="text-gray-600">Módulo en desarrollo</p>
+          </div>
+        );
+      case 'persons':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Gestión de Personas</h2>
+            <p className="text-gray-600">Módulo en desarrollo</p>
+          </div>
+        );
+      case 'users':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
+            <p className="text-gray-600">Módulo en desarrollo</p>
+          </div>
+        );
+      case 'products':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Gestión de Productos</h2>
+            <p className="text-gray-600">Módulo en desarrollo</p>
+          </div>
+        );
+      case 'categories':
+        return (
+          <div className="text-center py-12">
+            <h2 className="text-2xl font-bold mb-4">Gestión de Categorías</h2>
+            <p className="text-gray-600">Módulo en desarrollo</p>
+          </div>
+        );
       default:
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-            <div className="lg:col-span-2">
-              <ProductGrid />
-            </div>
-            <div className="lg:col-span-1">
-              <Cart />
+          <div className="space-y-6">
+            <CashRegisterControl />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+              <div className="lg:col-span-2">
+                <ProductGrid />
+              </div>
+              <div className="lg:col-span-1">
+                <Cart />
+              </div>
             </div>
           </div>
         );

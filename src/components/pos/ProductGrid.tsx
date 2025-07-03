@@ -13,7 +13,9 @@ export const ProductGrid = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  console.log('Products in ProductGrid:', products); // Debug log
+  console.log('ProductGrid - Products:', products);
+  console.log('ProductGrid - Products length:', products.length);
+  console.log('ProductGrid - Cash register open:', cashRegisterOpen);
 
   const categories = ['all', ...Array.from(new Set(products.map(p => p.category)))];
   
@@ -24,6 +26,8 @@ export const ProductGrid = () => {
     return matchesCategory && matchesSearch;
   });
 
+  console.log('ProductGrid - Filtered products:', filteredProducts);
+
   const getStockBadgeColor = (stock: number) => {
     if (stock <= 0) return 'bg-red-500 text-white';
     if (stock <= 10) return 'bg-orange-500 text-white';
@@ -32,8 +36,10 @@ export const ProductGrid = () => {
 
   const handleAddToCart = (product: any) => {
     if (!cashRegisterOpen) {
+      console.log('Cannot add to cart - cash register closed');
       return;
     }
+    console.log('Adding product to cart:', product);
     addToCart(product);
   };
 
@@ -80,6 +86,15 @@ export const ProductGrid = () => {
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
             <p className="text-red-800 text-center font-medium">
               La caja está cerrada. Abra la caja para comenzar a vender.
+            </p>
+          </div>
+        )}
+
+        {/* Debug Info */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+            <p className="text-blue-800 text-sm">
+              Debug: {products.length} productos cargados, {filteredProducts.length} mostrados
             </p>
           </div>
         )}
@@ -135,9 +150,14 @@ export const ProductGrid = () => {
                 {products.length === 0 ? 'No hay productos disponibles' : 'No se encontraron productos'}
               </p>
               {products.length === 0 && (
-                <p className="text-sm text-gray-400 mt-2">
-                  Los productos aparecerán aquí cuando se agreguen al sistema
-                </p>
+                <div className="mt-4 space-y-2">
+                  <p className="text-sm text-gray-400">
+                    Los productos aparecerán aquí cuando se agreguen al sistema
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Debug: Productos en contexto: {products.length}
+                  </p>
+                </div>
               )}
             </div>
           )}
