@@ -6,55 +6,14 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { usePOS } from '@/contexts/POSContext';
 import { useToast } from "@/hooks/use-toast";
-import { Clock, FileText, CreditCard, User } from 'lucide-react';
+import { Clock, FileText, CreditCard, User, Eye } from 'lucide-react';
 import { Sale } from '@/types/pos';
+import { TicketGenerator } from './TicketGenerator';
 
 export const SalesHistory = () => {
   const { sales } = usePOS();
   const { toast } = useToast();
   const [selectedSale, setSelectedSale] = useState<Sale | null>(null);
-
-  const generateReceipt = (sale: Sale) => {
-    const receiptContent = `
-SISTEMA POS
-============================
-Recibo #${sale.id}
-Fecha: ${sale.timestamp.toLocaleDateString()} ${sale.timestamp.toLocaleTimeString()}
-${sale.customerName ? `Cliente: ${sale.customerName}` : ''}
-
-----------------------------
-PRODUCTOS:
-${sale.items.map(item => 
-  `${item.product.name} x${item.quantity}
-   $${item.product.price.toFixed(2)} c/u = $${(item.product.price * item.quantity).toFixed(2)}`
-).join('\n')}
-
-----------------------------
-Subtotal: $${sale.subtotal.toFixed(2)}
-Impuestos: $${sale.tax.toFixed(2)}
-TOTAL: $${sale.total.toFixed(2)}
-
-Método de pago: ${sale.paymentMethod.toUpperCase()}
-============================
-¡Gracias por su compra!
-    `;
-
-    // Create and download receipt
-    const blob = new Blob([receiptContent], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `recibo-${sale.id}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Recibo generado",
-      description: `Recibo #${sale.id} descargado exitosamente`,
-    });
-  };
 
   const paymentMethodColors = {
     cash: 'bg-green-100 text-green-800',
@@ -98,11 +57,24 @@ Método de pago: ${sale.paymentMethod.toUpperCase()}
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-lg text-green-600">
-                      ${sale.total.toFixed(2)}
+                      ${sale.total.toLocaleString()}
                     </span>
-                    <Badge className={paymentMethodColors[sale.paymentMethod]}>
-                      {paymentMethodLabels[sale.paymentMethod]}
-                    </Badge>
+                    <div className="flex items-center space-x-2">
+                      <Badge className={paymentMethodColors[sale.paymentMethod]}>
+                        {paymentMethodLabels[sale.paymentMethod]}
+                      </Badge>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedSale(sale);
+                        }}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                   
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -147,14 +119,15 @@ Método de pago: ${sale.paymentMethod.toUpperCase()}
                     {selectedSale.timestamp.toLocaleDateString()} a las {selectedSale.timestamp.toLocaleTimeString()}
                   </p>
                 </div>
-                <Button
-                  onClick={() => generateReceipt(selectedSale)}
-                  variant="outline"
-                  size="sm"
-                >
-                  <FileText className="h-4 w-4 mr-2" />
-                  Recibo
-                </Button>
+                <TicketGenerator 
+                  sale={selectedSale}
+                  onPrint={() => {
+                    toast({
+                      title: "Ticket reimpreso",
+                      description: `Ticket #${selectedSale.id} enviado a impresión`,
+                    });
+                  }}
+                />
               </div>
 
               {selectedSale.customerName && (
@@ -173,11 +146,11 @@ Método de pago: ${sale.paymentMethod.toUpperCase()}
                     <div>
                       <p className="font-medium">{item.product.name}</p>
                       <p className="text-sm text-muted-foreground">
-                        ${item.product.price.toFixed(2)} × {item.quantity}
+                        ${item.product.price.toLocaleString()} × {item.quantity}
                       </p>
                     </div>
                     <span className="font-bold">
-                      ${(item.product.price * item.quantity).toFixed(2)}
+                      ${(item.product.price * item.quantity).toLocaleString()}
                     </span>
                   </div>
                 ))}
@@ -188,15 +161,15 @@ Método de pago: ${sale.paymentMethod.toUpperCase()}
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal:</span>
-                  <span>${selectedSale.subtotal.toFixed(2)}</span>
+                  <span>${selectedSale.subtotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Impuestos:</span>
-                  <span>${selectedSale.tax.toFixed(2)}</span>
+                  <span>${selectedSale.tax.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between font-bold text-lg">
                   <span>Total:</span>
-                  <span className="text-green-600">${selectedSale.total.toFixed(2)}</span>
+                  <span className="text-green-600">${selectedSale.total.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -212,6 +185,7 @@ Método de pago: ${sale.paymentMethod.toUpperCase()}
             <div className="text-center py-12 text-muted-foreground">
               <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <p>Selecciona una venta para ver los detalles</p>
+              <p className="text-sm">Usa el icono del ojo para ver el ticket</p>
             </div>
           )}
         </CardContent>

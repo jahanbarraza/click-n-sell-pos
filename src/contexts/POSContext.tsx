@@ -10,6 +10,7 @@ interface POSContextType {
   sales: Sale[];
   cart: CartItem[];
   userRole: 'admin' | 'cashier';
+  cashRegisterOpen: boolean;
   addProduct: (product: Product) => void;
   updateProduct: (product: Product) => void;
   deleteProduct: (productId: string) => void;
@@ -30,6 +31,8 @@ interface POSContextType {
   updateUser: (user: POSUser) => void;
   deleteUser: (userId: string) => void;
   getLowStockAlerts: () => Product[];
+  openCashRegister: (initialAmount: number) => void;
+  closeCashRegister: () => void;
 }
 
 const POSContext = createContext<POSContextType | undefined>(undefined);
@@ -50,15 +53,67 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
   const [users, setUsers] = useState<POSUser[]>([]);
   const [sales, setSales] = useState<Sale[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
+  const [cashRegisterOpen, setCashRegisterOpen] = useState<boolean>(false);
 
   // Use the user role from AuthContext
   const userRole = user?.role || 'cashier';
 
   useEffect(() => {
-    // Load data from localStorage or default values
+    // Load data from localStorage or set default values
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
       setProducts(JSON.parse(storedProducts));
+    } else {
+      // Set default products if none exist
+      const defaultProducts: Product[] = [
+        {
+          id: '1',
+          name: 'Coca Cola 350ml',
+          price: 2500,
+          category: 'Bebidas',
+          stock: 50,
+          barcode: '7501234567890',
+          description: 'Refresco de cola 350ml'
+        },
+        {
+          id: '2',
+          name: 'Pan Integral',
+          price: 3200,
+          category: 'Panadería',
+          stock: 25,
+          barcode: '7501234567891',
+          description: 'Pan integral familiar'
+        },
+        {
+          id: '3',
+          name: 'Leche Entera 1L',
+          price: 4500,
+          category: 'Lácteos',
+          stock: 30,
+          barcode: '7501234567892',
+          description: 'Leche entera pasteurizada 1 litro'
+        },
+        {
+          id: '4',
+          name: 'Arroz Blanco 1kg',
+          price: 5800,
+          category: 'Granos',
+          stock: 20,
+          barcode: '7501234567893',
+          description: 'Arroz blanco premium 1kg'
+        },
+        {
+          id: '5',
+          name: 'Aceite Vegetal 500ml',
+          price: 6200,
+          category: 'Aceites',
+          stock: 15,
+          barcode: '7501234567894',
+          description: 'Aceite vegetal para cocinar 500ml'
+        }
+      ];
+      setProducts(defaultProducts);
+      localStorage.setItem('products', JSON.stringify(defaultProducts));
     }
 
     const storedCategories = localStorage.getItem('categories');
@@ -85,6 +140,11 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedCart) {
       setCart(JSON.parse(storedCart));
     }
+
+    const storedCashRegister = localStorage.getItem('cashRegisterOpen');
+    if (storedCashRegister) {
+      setCashRegisterOpen(JSON.parse(storedCashRegister));
+    }
   }, []);
 
   useEffect(() => {
@@ -95,7 +155,8 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem('users', JSON.stringify(users));
     localStorage.setItem('sales', JSON.stringify(sales));
     localStorage.setItem('cart', JSON.stringify(cart));
-  }, [products, categories, customers, users, sales, cart]);
+    localStorage.setItem('cashRegisterOpen', JSON.stringify(cashRegisterOpen));
+  }, [products, categories, customers, users, sales, cart, cashRegisterOpen]);
 
   const addProduct = (product: Product) => {
     setProducts([...products, product]);
@@ -243,6 +304,14 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     return products.filter(product => product.stock <= 10);
   };
 
+  const openCashRegister = (initialAmount: number) => {
+    setCashRegisterOpen(true);
+  };
+
+  const closeCashRegister = () => {
+    setCashRegisterOpen(false);
+  };
+
   const value = {
     products,
     categories,
@@ -251,6 +320,7 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     sales,
     cart,
     userRole,
+    cashRegisterOpen,
     addProduct,
     updateProduct,
     deleteProduct,
@@ -271,6 +341,8 @@ export const POSProvider = ({ children }: { children: React.ReactNode }) => {
     updateUser,
     deleteUser,
     getLowStockAlerts,
+    openCashRegister,
+    closeCashRegister,
   };
 
   return (
