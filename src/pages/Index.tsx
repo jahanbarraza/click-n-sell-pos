@@ -10,6 +10,15 @@ import { InventoryView } from '@/components/pos/InventoryView';
 import { Dashboard } from '@/components/pos/Dashboard';
 import { CashRegisterControl } from '@/components/pos/CashRegisterControl';
 import { ProductManagement } from '@/components/pos/ProductManagement';
+import { CategoriesComponent } from '@/components/pos/Categories';
+import { SubcategoriesComponent } from '@/components/pos/Subcategories';
+import { ImpuestosComponent } from '@/components/pos/ImpuestosComponent';
+import { Units } from '@/components/pos/Units';
+import { Companies } from '@/components/pos/Companies';
+import { Stores } from '@/components/pos/Stores';
+import { Persons } from '@/components/pos/Persons';
+import { Users } from '@/components/pos/Users';
+import { Roles } from '@/components/pos/Roles';
 
 export default function Index() {
   const { user, logout } = useAuth();
@@ -69,41 +78,24 @@ export default function Index() {
         return <Dashboard />;
       case 'products':
         return <ProductManagement />;
-      case 'companies':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Gestión de Compañías</h2>
-            <p className="text-gray-600">Módulo en desarrollo</p>
-          </div>
-        );
-      case 'stores':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Gestión de Tiendas</h2>
-            <p className="text-gray-600">Módulo en desarrollo</p>
-          </div>
-        );
-      case 'persons':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Gestión de Personas</h2>
-            <p className="text-gray-600">Módulo en desarrollo</p>
-          </div>
-        );
-      case 'users':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
-            <p className="text-gray-600">Módulo en desarrollo</p>
-          </div>
-        );
       case 'categories':
-        return (
-          <div className="text-center py-12">
-            <h2 className="text-2xl font-bold mb-4">Gestión de Categorías</h2>
-            <p className="text-gray-600">Módulo en desarrollo</p>
-          </div>
-        );
+        return <CategoriesComponent />;
+      case 'subcategories':
+        return <SubcategoriesComponent />;
+      case 'impuestos':
+        return <ImpuestosComponent />;
+      case 'units':
+        return <Units />;
+      case 'companies':
+        return <Companies />;
+      case 'stores':
+        return <Stores />;
+      case 'persons':
+        return <Persons />;
+      case 'users':
+        return <Users />;
+      case 'roles':
+        return <Roles />;
       default:
         return (
           <div className="space-y-6">
