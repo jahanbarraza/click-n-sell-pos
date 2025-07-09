@@ -20,7 +20,7 @@ const Login = () => {
   // Redireccionar si ya está autenticado
   useEffect(() => {
     if (user) {
-      navigate('/');
+      navigate('/dashboard');
     }
   }, [user, navigate]);
 
@@ -44,7 +44,7 @@ const Login = () => {
         description: "Inicio de sesión exitoso"
       });
       // Redireccionar al dashboard
-      navigate('/');
+      navigate('/dashboard');
     } else {
       toast({
         title: "Error",

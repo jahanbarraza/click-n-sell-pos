@@ -115,6 +115,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('isAuthenticated');
+    // Redirigir a la página de inicio
+    window.location.href = '/';
   };
 
   const updatePassword = async (currentPassword: string, newPassword: string): Promise<boolean> => {
