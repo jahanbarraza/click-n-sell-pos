@@ -19,6 +19,8 @@ import { Stores } from '@/components/pos/Stores';
 import { Persons } from '@/components/pos/Persons';
 import { Users } from '@/components/pos/Users';
 import { Roles } from '@/components/pos/Roles';
+import { TiposIdentificacionComponent } from '@/components/pos/TiposIdentificacion';
+import { CierreDiario } from '@/components/pos/CierreDiario';
 
 export default function Index() {
   const { user, logout } = useAuth();
@@ -96,6 +98,10 @@ export default function Index() {
         return <Users />;
       case 'roles':
         return <Roles />;
+      case 'tipos-identificacion':
+        return <TiposIdentificacionComponent />;
+      case 'cierre-diario':
+        return <CierreDiario />;
       default:
         return (
           <div className="space-y-6">

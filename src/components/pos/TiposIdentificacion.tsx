@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { CreditCard, Plus, Edit, Trash2, Globe } from 'lucide-react';
 import { TipoIdentificacionFormModal } from './TipoIdentificacionFormModal';
@@ -198,6 +199,26 @@ export const TiposIdentificacionComponent = () => {
         </div>
       </div>
 
+      {/* Modal de crear tipo */}
+      <TipoIdentificacionFormModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onSubmit={handleSubmitTipo}
+        mode="create"
+      />
+
+      {/* Modal de editar tipo */}
+      <TipoIdentificacionFormModal
+        isOpen={showEditModal}
+        onClose={() => {
+          setShowEditModal(false);
+          setSelectedTipo(null);
+        }}
+        onSubmit={handleSubmitTipo}
+        tipo={selectedTipo}
+        mode="edit"
+      />
+
       {/* Diálogo de confirmación de eliminación */}
       {showDeleteDialog && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -227,27 +248,6 @@ export const TiposIdentificacionComponent = () => {
           </div>
         </div>
       )}
-
-      {/* Modal de crear tipo */}
-      <TipoIdentificacionFormModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-        onSubmit={handleSubmitTipo}
-        mode="create"
-      />
-
-      {/* Modal de editar tipo */}
-      <TipoIdentificacionFormModal
-        isOpen={showEditModal}
-        onClose={() => {
-          setShowEditModal(false);
-          setSelectedTipo(null);
-        }}
-        onSubmit={handleSubmitTipo}
-        tipo={selectedTipo}
-        mode="edit"
-      />
     </div>
   );
 };
-
