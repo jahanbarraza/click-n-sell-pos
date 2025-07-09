@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
@@ -6,6 +7,7 @@ import { ProductGrid } from '@/components/pos/ProductGrid';
 import { Cart } from '@/components/pos/Cart';
 import { SalesHistory } from '@/components/pos/SalesHistory';
 import { InventoryView } from '@/components/pos/InventoryView';
+import { InventoryMovements } from '@/components/pos/InventoryMovements';
 import { Dashboard } from '@/components/pos/Dashboard';
 import { CashRegisterControl } from '@/components/pos/CashRegisterControl';
 import { ProductManagement } from '@/components/pos/ProductManagement';
@@ -75,6 +77,8 @@ export default function Index() {
         return <SalesHistory />;
       case 'inventory':
         return <InventoryView />;
+      case 'inventory-movements':
+        return <InventoryMovements />;
       case 'dashboard':
         return <Dashboard />;
       case 'products':
