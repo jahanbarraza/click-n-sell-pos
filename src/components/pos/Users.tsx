@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Users, Plus, Edit, Key, Trash2 } from 'lucide-react';
 import { UserFormModal } from './UserFormModal';
@@ -46,7 +47,7 @@ const initialUsers: User[] = [
   }
 ];
 
-export const UsersComponent = () => {
+export const Users = () => {
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -322,4 +323,3 @@ export const UsersComponent = () => {
     </div>
   );
 };
-
