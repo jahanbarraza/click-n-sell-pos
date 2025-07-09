@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
@@ -11,7 +10,7 @@ import { Dashboard } from '@/components/pos/Dashboard';
 import { CashRegisterControl } from '@/components/pos/CashRegisterControl';
 import { ProductManagement } from '@/components/pos/ProductManagement';
 import { CategoriesComponent } from '@/components/pos/Categories';
-import { SubcategoriesComponent } from '@/components/pos/Subcategories';
+import { Subcategories } from '@/components/pos/Subcategories';
 import { ImpuestosComponent } from '@/components/pos/ImpuestosComponent';
 import { Units } from '@/components/pos/Units';
 import { Companies } from '@/components/pos/Companies';
@@ -83,7 +82,7 @@ export default function Index() {
       case 'categories':
         return <CategoriesComponent />;
       case 'subcategories':
-        return <SubcategoriesComponent />;
+        return <Subcategories />;
       case 'impuestos':
         return <ImpuestosComponent />;
       case 'units':

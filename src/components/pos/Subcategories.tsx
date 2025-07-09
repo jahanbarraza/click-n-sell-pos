@@ -22,7 +22,7 @@ interface Category {
   color: string;
 }
 
-export const SubcategoriesComponent: React.FC = () => {
+export const Subcategories: React.FC = () => {
   // Categorías disponibles (simulando las que ya creamos)
   const categories: Category[] = [
     { id: '1', name: 'Bebidas', code: 'BEB', color: '#3B82F6' },
@@ -382,3 +382,4 @@ export const SubcategoriesComponent: React.FC = () => {
   );
 };
 
+export default Subcategories;
