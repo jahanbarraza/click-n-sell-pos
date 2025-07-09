@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Users, Plus, Edit, Key, Trash2 } from 'lucide-react';
+import { Users as UsersIcon, Plus, Edit, Key, Trash2 } from 'lucide-react';
 import { UserFormModal } from './UserFormModal';
 
 interface User {
@@ -119,7 +119,7 @@ export const Users = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-            <Users className="w-6 h-6 text-blue-600" />
+            <UsersIcon className="w-6 h-6 text-blue-600" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Gestión de Usuarios</h1>
