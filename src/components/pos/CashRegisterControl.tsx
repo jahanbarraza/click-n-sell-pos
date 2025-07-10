@@ -34,38 +34,41 @@ export const CashRegisterControl = () => {
   };
 
   return (
-    <Card className="mb-4">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center justify-between">
+    <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+      <CardHeader className="pb-2">
+        <CardTitle className="flex items-center justify-between text-sm">
           <div className="flex items-center space-x-2">
             {cashRegisterOpen ? (
-              <Unlock className="h-5 w-5 text-green-600" />
+              <Unlock className="h-4 w-4 text-green-600" />
             ) : (
-              <Lock className="h-5 w-5 text-red-600" />
+              <Lock className="h-4 w-4 text-red-600" />
             )}
-            <span>Estado de Caja</span>
+            <span className="text-sm font-medium">Estado de Caja</span>
           </div>
-          <Badge variant={cashRegisterOpen ? "default" : "destructive"}>
-            {cashRegisterOpen ? "Caja Abierta" : "Caja Cerrada"}
+          <Badge 
+            variant={cashRegisterOpen ? "default" : "destructive"}
+            className="text-xs px-2 py-1"
+          >
+            {cashRegisterOpen ? "Abierta" : "Cerrada"}
           </Badge>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-2">
         {!cashRegisterOpen ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {!showOpenForm ? (
               <Button 
                 onClick={() => setShowOpenForm(true)}
-                className="w-full bg-green-600 hover:bg-green-700"
+                className="w-full h-9 bg-green-600 hover:bg-green-700 text-sm"
               >
-                <Unlock className="h-4 w-4 mr-2" />
+                <Unlock className="h-3 w-3 mr-1" />
                 Abrir Caja
               </Button>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
-                  <Label htmlFor="initialAmount" className="flex items-center space-x-2">
-                    <DollarSign className="h-4 w-4" />
+                  <Label htmlFor="initialAmount" className="flex items-center space-x-1 text-xs">
+                    <DollarSign className="h-3 w-3" />
                     <span>Monto Inicial</span>
                   </Label>
                   <Input
@@ -76,16 +79,20 @@ export const CashRegisterControl = () => {
                     placeholder="0.00"
                     min="0"
                     step="0.01"
+                    className="h-8 text-sm"
                   />
                 </div>
-                <div className="flex space-x-2">
-                  <Button onClick={handleOpenCash} className="flex-1 bg-green-600 hover:bg-green-700">
-                    Confirmar Apertura
+                <div className="flex space-x-1">
+                  <Button 
+                    onClick={handleOpenCash} 
+                    className="flex-1 h-8 bg-green-600 hover:bg-green-700 text-xs"
+                  >
+                    Confirmar
                   </Button>
                   <Button 
                     variant="outline" 
                     onClick={() => setShowOpenForm(false)}
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs"
                   >
                     Cancelar
                   </Button>
@@ -97,9 +104,9 @@ export const CashRegisterControl = () => {
           <Button 
             onClick={handleCloseCash}
             variant="destructive"
-            className="w-full"
+            className="w-full h-9 text-sm"
           >
-            <Lock className="h-4 w-4 mr-2" />
+            <Lock className="h-3 w-3 mr-1" />
             Cerrar Caja
           </Button>
         )}
