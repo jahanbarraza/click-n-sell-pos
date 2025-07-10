@@ -25,19 +25,23 @@ import { CierreDiario } from '@/components/pos/CierreDiario';
 
 export default function Index() {
   const { user, logout } = useAuth();
-  const [activeView, setActiveView] = useState('pos');
+  const [activeView, setActiveView] = useState('dashboard');
 
   // Check for hash in URL to set initial view
   useEffect(() => {
     const hash = window.location.hash.replace('#', '');
     if (hash && hash !== '__lovable_token') {
+      console.log('Setting active view from URL hash:', hash);
       setActiveView(hash);
+    } else {
+      // Si no hay hash, mostrar el dashboard por defecto
+      setActiveView('dashboard');
     }
   }, []);
 
   // Update URL hash when view changes
   useEffect(() => {
-    if (activeView !== 'pos') {
+    if (activeView !== 'dashboard') {
       window.history.replaceState(null, '', `#${activeView}`);
     } else {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
@@ -86,6 +90,7 @@ export default function Index() {
       case 'categories':
         return <CategoriesComponent />;
       case 'subcategories':
+        console.log('Rendering Subcategories component');
         return <Subcategories />;
       case 'impuestos':
         return <ImpuestosComponent />;
@@ -106,19 +111,8 @@ export default function Index() {
       case 'cierre-diario':
         return <CierreDiario />;
       default:
-        return (
-          <div className="space-y-6">
-            <CashRegisterControl />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-              <div className="lg:col-span-2">
-                <ProductGrid />
-              </div>
-              <div className="lg:col-span-1">
-                <Cart />
-              </div>
-            </div>
-          </div>
-        );
+        console.log('Default case, showing dashboard');
+        return <Dashboard />;
     }
   };
 
@@ -131,7 +125,7 @@ export default function Index() {
               <h1 className="text-xl font-semibold text-gray-800">Sistema POS</h1>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-gray-600">
-                  Bienvenido, {user.email}
+                  Bienvenido, {user.name || user.email}
                 </span>
                 <button
                   onClick={logout}

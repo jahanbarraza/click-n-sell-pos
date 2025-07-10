@@ -20,6 +20,7 @@ const Login = () => {
   // Redireccionar si ya está autenticado
   useEffect(() => {
     if (user) {
+      console.log('Usuario autenticado, redirigiendo al dashboard');
       navigate('/dashboard');
     }
   }, [user, navigate]);
@@ -36,6 +37,7 @@ const Login = () => {
       return;
     }
 
+    console.log('Intentando iniciar sesión con:', email);
     const success = await login(email, password);
     
     if (success) {
@@ -43,6 +45,7 @@ const Login = () => {
         title: "Éxito",
         description: "Inicio de sesión exitoso"
       });
+      console.log('Login exitoso, redirigiendo al dashboard');
       // Redireccionar al dashboard
       navigate('/dashboard');
     } else {

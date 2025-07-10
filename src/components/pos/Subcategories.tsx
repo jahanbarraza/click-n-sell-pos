@@ -23,6 +23,8 @@ interface Category {
 }
 
 export const Subcategories: React.FC = () => {
+  console.log('Subcategories component rendering');
+
   // Categorías disponibles (simulando las que ya creamos)
   const categories: Category[] = [
     { id: '1', name: 'Bebidas', code: 'BEB', color: '#3B82F6' },
@@ -33,7 +35,6 @@ export const Subcategories: React.FC = () => {
   ];
 
   const [subcategories, setSubcategories] = useState<Subcategory[]>([
-    // Bebidas
     {
       id: '1',
       name: 'Bebidas Calientes',
@@ -70,7 +71,6 @@ export const Subcategories: React.FC = () => {
       createdAt: new Date(),
       updatedAt: new Date()
     },
-    // Comidas
     {
       id: '4',
       name: 'Platos Principales',
@@ -107,7 +107,6 @@ export const Subcategories: React.FC = () => {
       createdAt: new Date(),
       updatedAt: new Date()
     },
-    // Postres
     {
       id: '7',
       name: 'Postres Fríos',
@@ -132,7 +131,6 @@ export const Subcategories: React.FC = () => {
       createdAt: new Date(),
       updatedAt: new Date()
     },
-    // Snacks
     {
       id: '9',
       name: 'Snacks Salados',
@@ -157,7 +155,6 @@ export const Subcategories: React.FC = () => {
       createdAt: new Date(),
       updatedAt: new Date()
     },
-    // Helados
     {
       id: '11',
       name: 'Helados Cremosos',
@@ -190,16 +187,19 @@ export const Subcategories: React.FC = () => {
   const [filterCategory, setFilterCategory] = useState<string>('all');
 
   const handleCreateSubcategory = () => {
+    console.log('Opening create subcategory modal');
     setShowCreateModal(true);
   };
 
   const handleEditSubcategory = (subcategory: Subcategory) => {
+    console.log('Editing subcategory:', subcategory.name);
     setSelectedSubcategory(subcategory);
     setShowEditModal(true);
   };
 
   const handleDeleteSubcategory = (subcategory: Subcategory) => {
     if (window.confirm(`¿Estás seguro de que deseas eliminar la subcategoría "${subcategory.name}"?`)) {
+      console.log('Deleting subcategory:', subcategory.name);
       setSubcategories(subcategories.filter(s => s.id !== subcategory.id));
     }
   };
@@ -207,6 +207,7 @@ export const Subcategories: React.FC = () => {
   const handleSaveSubcategory = (subcategoryData: Omit<Subcategory, 'id' | 'createdAt' | 'updatedAt'>) => {
     if (selectedSubcategory) {
       // Editar subcategoría existente
+      console.log('Updating subcategory:', selectedSubcategory.name);
       setSubcategories(subcategories.map(s => 
         s.id === selectedSubcategory.id 
           ? { ...s, ...subcategoryData, updatedAt: new Date() }
@@ -214,6 +215,7 @@ export const Subcategories: React.FC = () => {
       ));
     } else {
       // Crear nueva subcategoría
+      console.log('Creating new subcategory:', subcategoryData.name);
       const newSubcategory: Subcategory = {
         id: Date.now().toString(),
         ...subcategoryData,
@@ -228,6 +230,7 @@ export const Subcategories: React.FC = () => {
   };
 
   const handleCloseModal = () => {
+    console.log('Closing modal');
     setShowCreateModal(false);
     setShowEditModal(false);
     setSelectedSubcategory(null);
@@ -237,6 +240,8 @@ export const Subcategories: React.FC = () => {
   const filteredSubcategories = filterCategory === 'all' 
     ? subcategories 
     : subcategories.filter(s => s.categoryId === filterCategory);
+
+  console.log('Filtered subcategories count:', filteredSubcategories.length);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
