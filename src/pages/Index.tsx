@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
@@ -65,15 +64,13 @@ export default function Index() {
     switch (activeView) {
       case 'pos':
         return (
-          <div className="space-y-6">
-            <CashRegisterControl />
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-              <div className="lg:col-span-2">
-                <ProductGrid />
-              </div>
-              <div className="lg:col-span-1">
-                <Cart />
-              </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+            <div className="lg:col-span-2">
+              <ProductGrid />
+            </div>
+            <div className="lg:col-span-1 space-y-6">
+              <CashRegisterControl />
+              <Cart />
             </div>
           </div>
         );
