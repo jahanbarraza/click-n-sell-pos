@@ -89,7 +89,7 @@ export default function Index() {
         return <ProductManagement />;
       case 'categories':
         return <CategoriesComponent />;
-      case 'subcategories':
+      case 'subcategorias':
         console.log('Rendering Subcategories component');
         return <Subcategories />;
       case 'impuestos':
@@ -111,7 +111,7 @@ export default function Index() {
       case 'cierre-diario':
         return <CierreDiario />;
       default:
-        console.log('Default case, showing dashboard');
+        console.log('Default case, showing dashboard for view:', activeView);
         return <Dashboard />;
     }
   };
