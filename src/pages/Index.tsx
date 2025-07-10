@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { POSProvider } from '@/contexts/POSContext';
@@ -49,10 +50,10 @@ export default function Index() {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Sistema POS</h1>
-          <p className="text-gray-600">Por favor, inicia sesión para continuar</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="text-center max-w-md w-full">
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4">Sistema POS</h1>
+          <p className="text-gray-600 text-sm sm:text-base">Por favor, inicia sesión para continuar</p>
         </div>
       </div>
     );
@@ -64,11 +65,11 @@ export default function Index() {
     switch (activeView) {
       case 'pos':
         return (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-            <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 lg:gap-6 h-full">
+            <div className="xl:col-span-2 order-2 xl:order-1">
               <ProductGrid />
             </div>
-            <div className="lg:col-span-1 space-y-6">
+            <div className="xl:col-span-1 order-1 xl:order-2 space-y-4 lg:space-y-6">
               <CashRegisterControl />
               <Cart />
             </div>
@@ -116,31 +117,12 @@ export default function Index() {
   return (
     <POSProvider>
       <div className="min-h-screen bg-gray-50">
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <h1 className="text-xl font-semibold text-gray-800">Sistema POS</h1>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-gray-600">
-                  Bienvenido, {user.name || user.email}
-                </span>
-                <button
-                  onClick={logout}
-                  className="text-sm text-red-600 hover:text-red-800"
-                >
-                  Cerrar Sesión
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
-
         <HorizontalNavigation 
           activeView={activeView} 
           onViewChange={setActiveView} 
         />
 
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="max-w-7xl mx-auto px-2 sm:px-4 lg:px-8 py-4 lg:py-6">
           {renderContent()}
         </main>
       </div>
